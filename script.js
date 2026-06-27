@@ -1,254 +1,622 @@
 const { useState, useEffect } = React;
 
-// Данные портфолио
 const portfolioItems = [
-  { id: 'neiro', tag: 'Нейрофото', name: 'Серия семейных нейрофото', desc: 'Нежные портреты с доработкой в нейросетях и ручной ретушью. Для печати и соцсетей. Нажмите, чтобы посмотреть 22 фото.' },
-  { id: 'market', tag: 'Маркетплейсы', name: 'Карточки для Wildberries', desc: 'Комплект карточек с нейрофоном, инфографикой и акцентом на выгоды товара.' },
-  { id: 'site', tag: 'Сайт', name: 'Лендинг для эксперта', desc: 'Одностраничный сайт с воронкой заявки и интеграцией мессенджера.' },
-  { id: 'bot', tag: 'Бот', name: 'Telegram‑бот для комьюнити', desc: 'Бот, который отвечает на типовые вопросы и собирает заявки в одно место.' }
+  {
+    id: "neiro",
+    tag: "Нейрофото",
+    name: "Семейные AI-портреты",
+    desc: "Нейрофото с художественной обработкой и ретушью. Нажмите, чтобы открыть галерею."
+  },
+  {
+    id: "site",
+    tag: "AI-сайты",
+    name: "Лендинги под ключ",
+    desc: "Продающие сайты с формами заявок, анимацией и современным UI."
+  },
+  {
+    id: "bot",
+    tag: "Telegram-боты",
+    name: "Автоматизация заявок",
+    desc: "Боты, которые отвечают клиентам и собирают лиды."
+  },
+  {
+    id: "market",
+    tag: "Маркетплейсы",
+    name: "Карточки товаров",
+    desc: "Карточки для Wildberries / Ozon с AI-фонами и инфографикой."
+  }
 ];
 
-// Данные чипов
 const chipsData = [
-  { type: 'neiro', text: 'НейроФото для брендов и семейных съемок' },
-  { type: 'site', text: 'Лендинги и сайты на JS' },
-  { type: 'bot', text: 'Боты для бизнеса и комьюнити' },
-  { type: 'market', text: 'Карточки для Wildberries и Ozon' }
+  { type: "neiro", text: "Нейрофото" },
+  { type: "site", text: "AI-сайты" },
+  { type: "bot", text: "Telegram-боты" },
+  { type: "market", text: "Маркетплейсы" }
 ];
 
-// Компонент карусели
-function CarouselModal({ isOpen, onClose, initialIndex = 0 }) {
-  const [currentIndex, setCurrentIndex] = useState(initialIndex);
-  const [imgError, setImgError] = useState(false);
-  const totalPhotos = 22;
-  const imgPath = 'img/';
+function MessageModal({ message, onClose }) {
+  if (!message) return null;
 
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') onClose();
-      if (e.key === 'ArrowLeft') {
-        setCurrentIndex(prev => prev > 0 ? prev - 1 : prev);
-        setImgError(false);
-      }
-      if (e.key === 'ArrowRight') {
-        setCurrentIndex(prev => prev < totalPhotos - 1 ? prev + 1 : prev);
-        setImgError(false);
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('keydown', handleKeyDown);
-      return () => document.removeEventListener('keydown', handleKeyDown);
-    }
-  }, [isOpen, onClose, totalPhotos]);
-
-  if (!isOpen) return null;
-
-  const nextPhoto = () => {
-    if (currentIndex < totalPhotos - 1) {
-      setCurrentIndex(currentIndex + 1);
-      setImgError(false);
-    }
-  };
-
-  const prevPhoto = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-      setImgError(false);
-    }
-  };
-
-  return (
-    React.createElement('div', { className: `modal ${isOpen ? 'active' : ''}`, onClick: onClose },
-      React.createElement('span', { className: 'modal-close', onClick: onClose }, '×'),
-      React.createElement('button', { className: 'carousel-btn carousel-prev', onClick: (e) => { e.stopPropagation(); prevPhoto(); } }, '‹'),
-      React.createElement('button', { className: 'carousel-btn carousel-next', onClick: (e) => { e.stopPropagation(); nextPhoto(); } }, '›'),
-      React.createElement('div', { className: 'modal-content', onClick: (e) => e.stopPropagation() },
-        !imgError ? 
-          React.createElement('img', { 
-            src: `${imgPath}${currentIndex + 1}.jpg`, 
-            alt: `Нейрофото работа ${currentIndex + 1}`,
-            onError: () => setImgError(true)
-          }) :
-          React.createElement('div', { style: { width: 'min(500px, 80vw)', height: 'min(500px, 80vw)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#1a1a2e', borderRadius: '16px', color: '#888', textAlign: 'center', padding: '20px' } },
-            React.createElement('div', { style: { fontSize: '64px', marginBottom: '20px' } }, '📷'),
-            React.createElement('div', null, 'Фото не найдено'),
-            React.createElement('div', { style: { fontSize: '12px', marginTop: '10px' } }, `${imgPath}${currentIndex + 1}.jpg`)
-          )
-      ),
-      React.createElement('div', { className: 'carousel-counter' }, `${currentIndex + 1} / ${totalPhotos}`)
+  return React.createElement(
+    "div",
+    { className: "modal active", onClick: onClose },
+    React.createElement(
+      "div",
+      {
+        className: "modal-content",
+        onClick: (e) => e.stopPropagation(),
+        style: {
+          background: "#111827",
+          padding: "30px",
+          borderRadius: "20px",
+          color: "white",
+          maxWidth: "420px",
+          textAlign: "center"
+        }
+      },
+      React.createElement("h3", { style: { marginBottom: "16px" } }, "Информация"),
+      React.createElement("p", { style: { lineHeight: 1.6 } }, message),
+      React.createElement(
+        "button",
+        {
+          className: "btn btn-primary",
+          style: { marginTop: "20px", marginInline: "auto" },
+          onClick: onClose
+        },
+        "Закрыть"
+      )
     )
   );
 }
 
-// Компонент карточки портфолио
-function PortfolioCard({ item, onCardClick }) {
-  return React.createElement('article', { className: 'portfolio-item', onClick: () => onCardClick(item.id) },
-    React.createElement('div', { className: 'portfolio-tag' }, item.tag),
-    React.createElement('div', { className: 'portfolio-name' }, item.name),
-    React.createElement('p', { className: 'portfolio-desc' }, item.desc)
-  );
-}
+function CarouselModal({ isOpen, onClose }) {
+  const [index, setIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState(null);
+  const total = 22;
 
-// Компонент чипа
-function Chip({ type, text, onClick }) {
-  return React.createElement('div', { className: 'chip', onClick: () => onClick(type) },
-    React.createElement('span', { className: 'chip-dot' }),
-    text
-  );
-}
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowLeft") prev();
+      if (e.key === "ArrowRight") next();
+    };
 
-// Компонент фото профиля
-function ProfilePhoto() {
-  return React.createElement('div', { className: 'photo-inner' },
-    React.createElement('img', { 
-      src: 'oksana.jpg',
-      alt: 'Оксана',
-      style: { width: '100%', height: '100%', objectFit: 'cover' },
-      onError: (e) => {
-        e.target.style.display = 'none';
-        e.target.parentElement.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-        e.target.parentElement.innerHTML = `
-          <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: white; text-align: center; flex-direction: column;">
-            <div style="font-size: 48px; margin-bottom: 10px;">📸</div>
-            <div style="font-size: 14px;">Оксана Баннова</div>
-          </div>
-          <div class="photo-glow"></div>
-        `;
-      }
-    }),
-    React.createElement('div', { className: 'photo-glow' })
-  );
-}
+    if (isOpen) {
+      document.addEventListener("keydown", handler);
+      return () => document.removeEventListener("keydown", handler);
+    }
+  }, [isOpen]);
 
-// Главный компонент приложения
-function App() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalStartIndex, setModalStartIndex] = useState(0);
+  if (!isOpen) return null;
 
-  const openCarousel = (startIndex = 0) => {
-    setModalStartIndex(startIndex);
-    setIsModalOpen(true);
+  const next = () => {
+    if (index < total - 1) setIndex(index + 1);
   };
+
+  const prev = () => {
+    if (index > 0) setIndex(index - 1);
+  };
+
+  return React.createElement(
+    "div",
+    { className: "modal active", onClick: onClose },
+    React.createElement("span", { className: "modal-close", onClick: onClose }, "×"),
+    React.createElement(
+      "button",
+      {
+        className: "carousel-btn carousel-prev",
+        onClick: (e) => {
+          e.stopPropagation();
+          prev();
+        }
+      },
+      "‹"
+    ),
+    React.createElement(
+      "button",
+      {
+        className: "carousel-btn carousel-next",
+        onClick: (e) => {
+          e.stopPropagation();
+          next();
+        }
+      },
+      "›"
+    ),
+    React.createElement(
+      "div",
+      {
+        className: "modal-content",
+        onClick: (e) => e.stopPropagation(),
+        onTouchStart: (e) => setTouchStart(e.touches[0].clientX),
+        onTouchEnd: (e) => {
+          const end = e.changedTouches[0].clientX;
+          const diff = touchStart - end;
+          if (diff > 50) next();
+          if (diff < -50) prev();
+        }
+      },
+      React.createElement("img", {
+        src: `img/${index + 1}.jpg`,
+        alt: `Фото ${index + 1}`,
+        loading: "lazy"
+      })
+    ),
+    React.createElement(
+      "div",
+      { className: "carousel-counter" },
+      `${index + 1} / ${total}`
+    )
+  );
+}
+
+function ProfilePhoto() {
+  const [error, setError] = useState(false);
+
+  if (error) {
+    return React.createElement(
+      "div",
+      {
+        className: "photo-inner",
+        style: {
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          background: "linear-gradient(135deg,#667eea,#764ba2)",
+          color: "white",
+          fontSize: "20px"
+        }
+      },
+      "📸 Оксана"
+    );
+  }
+
+  return React.createElement(
+    "div",
+    { className: "photo-inner" },
+    React.createElement("img", {
+      src: "oksana.jpg",
+      alt: "Оксана Баннова",
+      style: {
+        width: "100%",
+        height: "100%",
+        objectFit: "cover"
+      },
+      onError: () => setError(true)
+    }),
+    React.createElement("div", { className: "photo-glow" })
+  );
+}
+
+function ChatWidget() {
+  const [open, setOpen] = useState(false);
+
+  const [messages, setMessages] = useState([
+    {
+      sender: "bot",
+      text: "Привет 👋 Я AI-помощник Оксаны. Давайте оформим заявку. Как вас зовут?"
+    }
+  ]);
+
+  const [input, setInput] = useState("");
+  const [step, setStep] = useState(0);
+
+  const [lead, setLead] = useState({
+    name: "",
+    service: "",
+    budget: "",
+    contact: ""
+  });
+
+  const sendMessage = () => {
+    if (!input.trim()) return;
+
+    const userText = input.trim();
+
+    setMessages(prev => [
+      ...prev,
+      {
+        sender: "user",
+        text: userText
+      }
+    ]);
+
+    if (step === 0) {
+      setLead(prev => ({ ...prev, name: userText }));
+
+      setTimeout(() => {
+        setMessages(prev => [
+          ...prev,
+          {
+            sender: "bot",
+            text: "Что вам нужно? (нейрофото / сайт / бот / карточки)"
+          }
+        ]);
+      }, 500);
+
+      setStep(1);
+    }
+
+    else if (step === 1) {
+      setLead(prev => ({ ...prev, service: userText }));
+
+      setTimeout(() => {
+        setMessages(prev => [
+          ...prev,
+          {
+            sender: "bot",
+            text: "Какой у вас бюджет?"
+          }
+        ]);
+      }, 500);
+
+      setStep(2);
+    }
+
+    else if (step === 2) {
+      setLead(prev => ({ ...prev, budget: userText }));
+
+      setTimeout(() => {
+        setMessages(prev => [
+          ...prev,
+          {
+            sender: "bot",
+            text: "Оставьте контакт (Telegram / телефон / email)"
+          }
+        ]);
+      }, 500);
+
+      setStep(3);
+    }
+
+    else if (step === 3) {
+      const finalLead = {
+        ...lead,
+        contact: userText
+      };
+
+      console.log("Новая заявка:", finalLead);
+
+      setLead(finalLead);
+
+      setTimeout(() => {
+        setMessages(prev => [
+          ...prev,
+          {
+            sender: "bot",
+            text: "Спасибо ❤️ Заявка отправлена Оксане."
+          }
+        ]);
+      }, 500);
+
+      setStep(4);
+    }
+
+    setInput("");
+  };
+
+  if (!open) {
+    return React.createElement(
+      "button",
+      {
+        className: "chat-open-btn",
+        onClick: () => setOpen(true)
+      },
+      "💬"
+    );
+  }
+
+  return React.createElement(
+    "div",
+    { className: "chat-widget" },
+
+    React.createElement(
+      "div",
+      { className: "chat-header" },
+      "AI Помощник",
+      React.createElement(
+        "button",
+        {
+          className: "chat-close",
+          onClick: () => setOpen(false)
+        },
+        "×"
+      )
+    ),
+
+    React.createElement(
+      "div",
+      { className: "chat-messages" },
+      messages.map((msg, i) =>
+        React.createElement(
+          "div",
+          {
+            key: i,
+            className: `chat-message ${msg.sender}`
+          },
+          msg.text
+        )
+      )
+    ),
+
+    React.createElement(
+      "div",
+      { className: "chat-input-wrap" },
+
+      React.createElement("input", {
+        className: "chat-input",
+        value: input,
+        placeholder: "Введите сообщение...",
+        onChange: e => setInput(e.target.value),
+        onKeyDown: e => {
+          if (e.key === "Enter") sendMessage();
+        }
+      }),
+
+      React.createElement(
+        "button",
+        {
+          className: "chat-send",
+          onClick: sendMessage
+        },
+        "➤"
+      )
+    )
+  );
+}
+
+function App() {
+  const [carouselOpen, setCarouselOpen] = useState(false);
+  const [message, setMessage] = useState(null);
 
   const handleCardClick = (type) => {
-    if (type === 'neiro') {
-      openCarousel(0);
-    } else {
-      alert('Примеры по этому направлению можно посмотреть в Telegram или VK. Напишите мне, и я покажу больше работ!');
+    if (type === "neiro") {
+      setCarouselOpen(true);
+      return;
     }
+
+    setMessage(
+      "Примеры по этому направлению покажу лично в Telegram. Напишите мне — отправлю кейсы."
+    );
   };
 
-  const scrollToElement = (id) => {
-    const element = document.getElementById(id);
-    if (element) element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const scrollToPortfolio = () => {
+    document.getElementById("portfolio")?.scrollIntoView({
+      behavior: "smooth"
+    });
   };
 
-  const handleBriefClick = () => {
-    const email = "oksik3505@gmail.com";
-    const subject = encodeURIComponent("Проект: нейрофото / сайт / бот");
-    const body = encodeURIComponent("Привет, Оксана!\n\nКратко о задаче: \n— Что нужно: \n— Сроки: \n— Ссылки/референсы: \n\nБуду рада сотрудничеству!\n");
-    window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
-  };
+  return React.createElement(
+    "div",
+    null,
 
-  return React.createElement('div', null,
-    // HERO секция
-    React.createElement('section', { className: 'hero' },
-      React.createElement('div', { className: 'hero-text' },
-        React.createElement('div', { className: 'tagline' },
-          React.createElement('span', { className: 'tagline-dot' }),
-          'Нейрофото • сайты • автоматизация'
+    React.createElement(
+      "section",
+      { className: "hero" },
+
+      React.createElement(
+        "div",
+        { className: "hero-text" },
+
+        React.createElement(
+          "div",
+          { className: "tagline" },
+          React.createElement("span", { className: "tagline-dot" }),
+          "AI решения для бизнеса"
         ),
-        React.createElement('div', { className: 'hello' }, 'Привет, я Оксана'),
-        React.createElement('h1', null, 'Создаю ', React.createElement('span', null, 'нейрофото'), ', сайты и ботов'),
-        React.createElement('p', { className: 'subtitle' }, 'Самозанятая специалистка по визуалу и автоматизации: от вау‑фото для соцсетей и маркетплейсов до продуманных сайтов и умных ботов.'),
-        React.createElement('div', { className: 'chips' }, chipsData.map((chip) => React.createElement(Chip, { key: chip.type, type: chip.type, text: chip.text, onClick: handleCardClick }))),
-        React.createElement('div', { className: 'edu-wrap' },
-          React.createElement('div', { className: 'section-title' }, 'Образование'),
-          React.createElement('p', { className: 'edu-item' }, React.createElement('strong', null, 'Прикладная математика и информатика'), ', КемГУ — бакалавриат, 2018'),
-          React.createElement('p', { className: 'edu-item' }, React.createElement('strong', null, 'JavaScript‑разработчик'), ', Нетология — 2025')
+
+        React.createElement("div", { className: "hello" }, "Оксана Баннова"),
+
+        React.createElement(
+          "h1",
+          null,
+          "Создаю ",
+          React.createElement("span", null, "сайты, ботов и нейрофото"),
+          " для роста продаж"
         ),
-        React.createElement('div', { className: 'btn-row' },
-          React.createElement('button', { className: 'btn btn-primary', onClick: handleBriefClick },
-            React.createElement('span', { className: 'btn-icon' }, '✉'),
-            'Обсудить проект'
-          ),
-          React.createElement('button', { className: 'btn btn-ghost', onClick: () => scrollToElement('portfolio') },
-            React.createElement('span', { className: 'btn-icon' }, '★'),
-            'Посмотреть примеры'
-          )
-        )
-      ),
-      React.createElement('aside', { className: 'hero-media' },
-        React.createElement('div', { className: 'photo-wrap' },
-          React.createElement(ProfilePhoto, null),
-          React.createElement('div', { className: 'badge' },
-            React.createElement('div', { className: 'badge-inner' },
-              React.createElement('span', { className: 'status-dot' }),
-              'Открыта к новым проектам'
+
+        React.createElement(
+          "p",
+          { className: "subtitle" },
+          "Помогаю бизнесу автоматизировать заявки, усиливать визуал и получать больше клиентов."
+        ),
+
+        React.createElement(
+          "div",
+          { className: "chips" },
+          chipsData.map((chip) =>
+            React.createElement(
+              "div",
+              {
+                key: chip.type,
+                className: "chip",
+                onClick: () => handleCardClick(chip.type)
+              },
+              React.createElement("span", { className: "chip-dot" }),
+              chip.text
             )
           )
         ),
-        React.createElement('div', { className: 'accent-pill' },
-          React.createElement('span', null, React.createElement('span', { className: 'accent-pill-emoji' }, '⚡'), React.createElement('strong', null, 'Нейрофото, сайты и боты под ключ')),
-          React.createElement('span', null, 'Соберу визуал и автоматизацию так, чтобы вам хотелось делиться ссылкой.')
+
+        React.createElement(
+          "div",
+          { className: "edu-wrap" },
+          React.createElement("div", { className: "section-title" }, "Образование"),
+          React.createElement("p", { className: "edu-item" }, "Прикладная математика и информатика"),
+          React.createElement("p", { className: "edu-item" }, "JavaScript-разработчик")
         ),
-        React.createElement('div', { className: 'contacts' },
-          'Telegram: ', React.createElement('a', { href: 'https://t.me/OksBann', target: '_blank' }, '@OksBann'), ' · VK: ', React.createElement('a', { href: 'https://vk.com/neirooksii', target: '_blank' }, 'vk.com/neirooksii')
+
+        React.createElement(
+          "div",
+          { className: "btn-row" },
+
+          React.createElement(
+            "button",
+            {
+              className: "btn btn-primary",
+              onClick: () => window.open("https://t.me/OksBann", "_blank")
+            },
+            "Обсудить проект"
+          ),
+
+          React.createElement(
+            "button",
+            {
+              className: "btn btn-ghost",
+              onClick: scrollToPortfolio
+            },
+            "Портфолио"
+          )
         )
-      )
-    ),
-    
-    // Портфолио
-    React.createElement('section', { className: 'portfolio', id: 'portfolio' },
-      React.createElement('div', { className: 'portfolio-inner' },
-        React.createElement('div', { className: 'portfolio-header' },
-          React.createElement('div', null,
-            React.createElement('div', { className: 'section-title' }, 'Портфолио'),
-            React.createElement('div', { className: 'portfolio-title' }, 'Мои работы и услуги')
-          ),
-          React.createElement('div', { className: 'portfolio-sub' }, 'Нажмите на карточку "Нейрофото", чтобы посмотреть 22 фото')
+      ),
+
+      React.createElement(
+        "aside",
+        { className: "hero-media" },
+
+        React.createElement(
+          "div",
+          { className: "photo-wrap" },
+          React.createElement(ProfilePhoto)
         ),
-        React.createElement('div', { className: 'portfolio-grid' }, portfolioItems.map((item) => React.createElement(PortfolioCard, { key: item.id, item: item, onCardClick: handleCardClick })))
-      )
-    ),
-    
-    // Контакты
-    React.createElement('section', { className: 'contact-section', id: 'contact' },
-      React.createElement('div', { className: 'contact-inner' },
-        React.createElement('div', { className: 'contact-text' }, 'Хочется обсудить нейрофото, сайт, бота или карточки для маркетплейсов — напишите мне в удобный мессенджер.'),
-        React.createElement('div', { className: 'contact-buttons' },
-          React.createElement('a', { href: 'https://t.me/OksBann', target: '_blank', className: 'contact-btn telegram' },
-            React.createElement('span', { className: 'icon' }, '✈'),
-            React.createElement('span', null, 'Написать в Telegram')
-          ),
-          React.createElement('a', { href: 'https://vk.com/neirooksii', target: '_blank', className: 'contact-btn vk' },
-            React.createElement('span', { className: 'icon' }, 'ВК'),
-            React.createElement('span', null, 'Написать во VK')
-          ),
-          React.createElement('a', { href: 'mailto:oksik3505@gmail.com', className: 'contact-btn email' },
-            React.createElement('span', { className: 'icon' }, '✉'),
-            React.createElement('span', null, 'Письмо на почту')
+
+        React.createElement(
+          "div",
+          { className: "badge" },
+          React.createElement(
+            "div",
+            { className: "badge-inner" },
+            React.createElement("span", { className: "status-dot" }),
+            "Открыта к новым проектам"
+          )
+        ),
+
+        React.createElement(
+          "div",
+          { className: "accent-pill" },
+          React.createElement("strong", null, "AI под ключ"),
+          React.createElement(
+            "span",
+            null,
+            "Сайт + бот + автоматизация"
+          )
+        ),
+
+        React.createElement(
+          "div",
+          { className: "contacts" },
+          "Telegram: ",
+          React.createElement(
+            "a",
+            { href: "https://t.me/OksBann", target: "_blank" },
+            "@OksBann"
           )
         )
       )
     ),
-    
-    // Футер
-    React.createElement('footer', { className: 'site-footer' },
-      React.createElement('div', { className: 'site-footer-inner' },
-        React.createElement('div', null, '© ', new Date().getFullYear(), ' Оксана Баннова. Самозанятая.'),
-        React.createElement('div', { className: 'site-footer-actions' },
-          React.createElement('button', { className: 'footer-link-btn', onClick: () => scrollToElement('contact') }, 'Связаться'),
-          React.createElement('button', { className: 'footer-link-btn', onClick: () => window.scrollTo({ top: 0, behavior: 'smooth' }) }, 'Наверх')
+
+    React.createElement(
+      "section",
+      {
+        className: "portfolio",
+        id: "portfolio"
+      },
+      React.createElement(
+        "div",
+        { className: "portfolio-inner" },
+
+        React.createElement(
+          "div",
+          { className: "portfolio-header" },
+          React.createElement(
+            "div",
+            null,
+            React.createElement("div", { className: "section-title" }, "Портфолио"),
+            React.createElement("div", { className: "portfolio-title" }, "Мои услуги")
+          ),
+          React.createElement(
+            "div",
+            { className: "portfolio-sub" },
+            "Нажмите на карточку"
+          )
+        ),
+
+        React.createElement(
+          "div",
+          { className: "portfolio-grid" },
+          portfolioItems.map((item) =>
+            React.createElement(
+              "div",
+              {
+                key: item.id,
+                className: "portfolio-item",
+                onClick: () => handleCardClick(item.id)
+              },
+              React.createElement("div", { className: "portfolio-tag" }, item.tag),
+              React.createElement("div", { className: "portfolio-name" }, item.name),
+              React.createElement("p", { className: "portfolio-desc" }, item.desc)
+            )
+          )
         )
       )
     ),
-    
-    React.createElement(CarouselModal, { isOpen: isModalOpen, onClose: () => setIsModalOpen(false), initialIndex: modalStartIndex })
-  );
+
+    React.createElement(
+      "section",
+      { className: "contact-section" },
+      React.createElement(
+        "div",
+        { className: "contact-inner" },
+        React.createElement(
+          "div",
+          { className: "contact-text" },
+          "Есть проект? Напишите мне, обсудим задачу и найдём решение."
+        ),
+        React.createElement(
+          "div",
+          { className: "contact-buttons" },
+          React.createElement(
+            "a",
+            {
+              href: "https://t.me/OksBann",
+              target: "_blank",
+              className: "contact-btn"
+            },
+            "✈ Telegram"
+          )
+        )
+      )
+    ),
+
+    React.createElement(
+      "footer",
+      { className: "site-footer" },
+      React.createElement(
+        "div",
+        { className: "site-footer-inner" },
+        React.createElement(
+          "div",
+          null,
+          "© ",
+          new Date().getFullYear(),
+          " Оксана Баннова"
+        )
+      )
+    ),
+
+    React.createElement(CarouselModal, {
+      isOpen: carouselOpen,
+      onClose: () => setCarouselOpen(false)
+    }),
+
+    React.createElement(MessageModal, {
+      message,
+      onClose: () => setMessage(null)
+    }),
+  
+  React.createElement(ChatWidget)
+);
 }
 
-// Рендерим приложение
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(React.createElement(App));
