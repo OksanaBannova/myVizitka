@@ -9,14 +9,27 @@ const supabase = window.supabase.createClient(
 );
 
 async function saveLead(data) {
-  const { error } = await supabase
-    .from("leads")
-    .insert([data]);
+  console.log("Отправляем в Supabase:", data);
 
-  if (error) {
-    console.error("Supabase error:", error);
-  } else {
-    console.log("Заявка сохранена в Supabase");
+  try {
+    const result = await supabase
+      .from("leads")
+      .insert([data])
+      .select();
+
+    console.log("FULL RESPONSE:", result);
+
+    if (result.error) {
+      console.error("SUPABASE ERROR MESSAGE:", result.error.message);
+      console.error("SUPABASE ERROR FULL:", result.error);
+      alert("Ошибка Supabase: " + result.error.message);
+    } else {
+      console.log("SUCCESS:", result.data);
+      alert("Заявка сохранена!");
+    }
+  } catch (err) {
+    console.error("JS ERROR:", err);
+    alert("JS error: " + err.message);
   }
 }
 
