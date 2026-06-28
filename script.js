@@ -1,5 +1,25 @@
 const { useState, useEffect } = React;
 
+const SUPABASE_URL = "https://eskauqttcvfxrbnvljyu.supabase.co";
+const SUPABASE_KEY = "sb_publishable_l0krKw0Ct33vQ0qKVznytw_YTFRiH_T";
+
+const supabase = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+async function saveLead(data) {
+  const { error } = await supabase
+    .from("leads")
+    .insert([data]);
+
+  if (error) {
+    console.error("Supabase error:", error);
+  } else {
+    console.log("Заявка сохранена в Supabase");
+  }
+}
+
 const portfolioItems = [
   {
     id: "neiro",
@@ -270,27 +290,36 @@ function ChatWidget() {
     }
 
     else if (step === 3) {
-      const finalLead = {
-        ...lead,
-        contact: userText
-      };
+  const finalLead = {
+    ...lead,
+    contact: userText
+  };
 
-      console.log("Новая заявка:", finalLead);
+  saveLead({
+    name: finalLead.name,
+    service: finalLead.service,
+    budget: Number(finalLead.budget) || 0,
+    contact: finalLead.contact,
+    status: "new"
+  });
 
-      setLead(finalLead);
+  console.log("Новая заявка:", finalLead);
 
-      setTimeout(() => {
-        setMessages(prev => [
-          ...prev,
-          {
-            sender: "bot",
-            text: "Спасибо ❤️ Заявка отправлена Оксане."
-          }
-        ]);
-      }, 500);
+  setLead(finalLead);
 
-      setStep(4);
-    }
+  setTimeout(() => {
+    setMessages(prev => [
+      ...prev,
+      {
+        sender: "bot",
+        text: "Спасибо ❤️ Заявка сохранена. Оксана скоро свяжется с вами."
+      }
+    ]);
+  }, 500);
+
+  setStep(4);
+}
+
 
     setInput("");
   };
