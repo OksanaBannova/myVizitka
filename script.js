@@ -1,15 +1,13 @@
 
+fetch("https://api.telegram.org/bot8732757906:AAGIuXEFvfVWPP87_8yGCF1EcWN7D3c5zYI/getMe")
+  .then(r => r.json())
+  .then(console.log)
+  .catch(console.error);const { useState, useEffect } = React;
+
 fetch("https://YOUR-BACKEND-URL/lead", {
   method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    name: finalLead.name,
-    service: finalLead.service,
-    budget: finalLead.budget,
-    contact: finalLead.contact
-  })
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(finalLead)
 });
 
 const SUPABASE_URL = "https://eskauqttcvfxrbnvljyu.supabase.co";
