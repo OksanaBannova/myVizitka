@@ -11,26 +11,27 @@ app.post("/lead", async (req, res) => {
   const { name, service, budget, contact } = req.body;
 
   const text = `
-🔥 Новая заявка
+🔥 НОВАЯ ЗАЯВКА
 
-Имя: ${name}
-Услуга: ${service}
-Бюджет: ${budget}
-Контакт: ${contact}
+👤 Имя: ${name}
+🛠 Услуга: ${service}
+💰 Бюджет: ${budget}
+📞 Контакт: ${contact}
 `;
 
   try {
     await axios.post(
       `https://api.telegram.org/bot${process.env.TELEGRAM_TOKEN}/sendMessage`,
       {
-        chat_id: process.env.CHAT_ID,
-        text
+        chat_id: process.env.CHAT_ID, // <-- ID ГРУППЫ
+        text,
+        parse_mode: "HTML"
       }
     );
 
     res.json({ success: true });
   } catch (err) {
-    console.log(err.message);
+    console.log(err.response?.data || err.message);
     res.status(500).json({ success: false });
   }
 });
