@@ -1,44 +1,50 @@
 body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #050816;
+  font-family: Arial;
+  background: #0f0f0f;
   color: white;
-}
-
-.dashboard {
-  padding: 30px;
+  margin: 0;
+  padding: 20px;
 }
 
 h1 {
-  margin-bottom: 30px;
+  margin-bottom: 10px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border: none;
 }
 
 .stats {
   display: flex;
   gap: 20px;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 }
 
-.card {
-  background: rgba(255,255,255,0.06);
-  padding: 20px;
-  border-radius: 20px;
-  flex: 1;
+.board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
 }
 
-.card p {
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.leads {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+.column {
+  background: #1a1a1a;
+  padding: 10px;
+  border-radius: 10px;
+  min-height: 300px;
 }
 
 .lead-card {
-  background: rgba(255,255,255,0.05);
-  padding: 20px;
-  border-radius: 16px;
+  background: #2a2a2a;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+}
+
+.actions button {
+  margin: 2px;
+  cursor: pointer;
 }
