@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OVB CRM</title>
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <div class="dashboard">
+    <h1>OVB AI Studio CRM</h1>
+
+    <div class="stats">
+      <div class="card">
+        <h3>Сегодня</h3>
+        <p id="todayRevenue">0 ₽</p>
+      </div>
+
+      <div class="card">
+        <h3>Неделя</h3>
+        <p id="weekRevenue">0 ₽</p>
+      </div>
+
+      <div class="card">
+        <h3>Месяц</h3>
+        <p id="monthRevenue">0 ₽</p>
+      </div>
+    </div>
+
+    <h2>Заявки</h2>
+    <div id="leadsList" class="leads"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
