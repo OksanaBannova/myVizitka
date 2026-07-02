@@ -1,11 +1,4 @@
-
-fetch("https://api.telegram.org/bot8732757906:AAGIuXEFvfVWPP87_8yGCF1EcWN7D3c5zYI/getMe")
-  .then(r => r.json())
-  .then(console.log)
-  .catch(console.error);const { useState, useEffect } = React;
-
-
-
+const { useState, useEffect } = React;
 const SUPABASE_URL = "https://eskauqttcvfxrbnvljyu.supabase.co";
 const SUPABASE_KEY = "sb_publishable_l0krKw0Ct33vQ0qKVznytw_YTFRiH_T";
 
