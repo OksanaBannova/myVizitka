@@ -1,5 +1,5 @@
 const SUPABASE_URL = "https://eskauqttcvfxrbnvljyu.supabase.co";
-const SUPABASE_KEY = "sb_publishable_l0krKw0Ct33vQ0qKVznytw_YTFRiH_T";
+const SUPABASE_ANON_KEY = "sb_publishable_l0krKw0Ct33vQ0qKVznytw_YTFRiH_T";
 
 const supabase = window.supabase.createClient(
   SUPABASE_URL,
@@ -34,16 +34,21 @@ async function loadLeads() {
     if (diffDays < 7) week += Number(lead.budget);
     if (diffDays < 30) month += Number(lead.budget);
 
-    leadsList.innerHTML += `
-      <div class="lead-card">
-        <h3>${lead.name}</h3>
-        <p>Услуга: ${lead.service}</p>
-        <p>Бюджет: ${lead.budget} ₽</p>
-        <p>Контакт: ${lead.contact}</p>
-        <p>Статус: ${lead.status}</p>
-      </div>
-    `;
-  });
+    let html = "";
+
+data.forEach(lead => {
+  html += `
+    <div class="lead-card">
+      <h3>${lead.name}</h3>
+      <p>Услуга: ${lead.service}</p>
+      <p>Бюджет: ${lead.budget} ₽</p>
+      <p>Контакт: ${lead.contact}</p>
+      <p>Статус: ${lead.status}</p>
+    </div>
+  `;
+});
+
+leadsList.innerHTML = html;
 
   document.getElementById("todayRevenue").textContent = today + " ₽";
   document.getElementById("weekRevenue").textContent = week + " ₽";
