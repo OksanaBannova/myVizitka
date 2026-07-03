@@ -1,7 +1,5 @@
 const { useState, useEffect } = React;
 
-/* ================= SUPABASE ================= */
-
 const SUPABASE_URL = "https://eskauqttcvfxrbnvljyu.supabase.co";
 const SUPABASE_KEY =
   "sb_publishable_l0krKw0Ct33vQ0qKVznytw_YTFRiH_T";
@@ -10,6 +8,8 @@ const supabase = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY
 );
+
+/* ================= LEADS ================= */
 
 async function saveLead(data) {
   try {
@@ -20,15 +20,15 @@ async function saveLead(data) {
 
     if (error) {
       console.error(error);
-      alert("Ошибка Supabase: " + error.message);
+      alert("Ошибка: " + error.message);
       return false;
     }
 
-    console.log("Lead saved:", result);
+    console.log("Saved:", result);
     return true;
   } catch (err) {
     console.error(err);
-    alert("JS Error: " + err.message);
+    alert("JS error: " + err.message);
     return false;
   }
 }
@@ -39,37 +39,30 @@ const portfolioItems = [
   {
     id: "neiro",
     tag: "Нейрофото",
-    name: "Семейные AI-портреты",
-    desc: "AI-портреты с художественной обработкой."
+    name: "AI-портреты",
+    desc: "Художественные нейрофото с обработкой"
   },
   {
     id: "site",
     tag: "AI-сайты",
-    name: "Лендинги под ключ",
-    desc: "Современные продающие сайты."
+    name: "Лендинги",
+    desc: "Современные продающие сайты"
   },
   {
     id: "bot",
-    tag: "Боты",
+    tag: "MAX-боты",
     name: "Автоматизация заявок",
-    desc: "AI-боты и бизнес-автоматизация."
+    desc: "Разработка MAX-ботов для бизнеса (в работе)"
   },
   {
     id: "market",
     tag: "Маркетплейсы",
     name: "Карточки товаров",
-    desc: "Ozon / Wildberries инфографика."
+    desc: "Ozon / Wildberries инфографика"
   }
 ];
 
-const chipsData = [
-  { type: "neiro", text: "Нейрофото" },
-  { type: "site", text: "AI-сайты" },
-  { type: "bot", text: "Боты" },
-  { type: "market", text: "Маркетплейсы" }
-];
-
-/* ================= MODALS ================= */
+/* ================= MODAL ================= */
 
 function MessageModal({ message, onClose }) {
   if (!message) return null;
@@ -86,8 +79,7 @@ function MessageModal({ message, onClose }) {
           background: "#111827",
           padding: "24px",
           borderRadius: "16px",
-          color: "#fff",
-          maxWidth: "420px"
+          color: "white"
         }
       },
       React.createElement("h3", null, "Информация"),
@@ -101,46 +93,30 @@ function MessageModal({ message, onClose }) {
   );
 }
 
+/* ================= CAROUSEL ================= */
+
 function CarouselModal({ isOpen, onClose }) {
   const [index, setIndex] = useState(0);
   const total = 22;
-
-  const next = () => {
-    setIndex(i => (i < total - 1 ? i + 1 : i));
-  };
-
-  const prev = () => {
-    setIndex(i => (i > 0 ? i - 1 : i));
-  };
-
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const handler = (e) => {
-      if (e.key === "Escape") onClose();
-      if (e.key === "ArrowRight") next();
-      if (e.key === "ArrowLeft") prev();
-    };
-
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [isOpen]);
 
   if (!isOpen) return null;
 
   return React.createElement(
     "div",
     { className: "modal active", onClick: onClose },
-    React.createElement(
-      "span",
-      { className: "modal-close", onClick: onClose },
-      "×"
-    ),
+
     React.createElement(
       "button",
-      { className: "carousel-btn carousel-prev", onClick: prev },
+      {
+        className: "carousel-btn carousel-prev",
+        onClick: e => {
+          e.stopPropagation();
+          setIndex(i => Math.max(0, i - 1));
+        }
+      },
       "‹"
     ),
+
     React.createElement(
       "div",
       {
@@ -149,18 +125,20 @@ function CarouselModal({ isOpen, onClose }) {
       },
       React.createElement("img", {
         src: `img/${index + 1}.jpg`,
-        alt: "slide"
+        style: { maxWidth: "100%" }
       })
     ),
+
     React.createElement(
       "button",
-      { className: "carousel-btn carousel-next", onClick: next },
+      {
+        className: "carousel-btn carousel-next",
+        onClick: e => {
+          e.stopPropagation();
+          setIndex(i => Math.min(total - 1, i + 1));
+        }
+      },
       "›"
-    ),
-    React.createElement(
-      "div",
-      { className: "carousel-counter" },
-      `${index + 1} / ${total}`
     )
   );
 }
@@ -173,8 +151,11 @@ function ProfilePhoto() {
     { className: "photo-inner" },
     React.createElement("img", {
       src: "oksana.jpg",
-      alt: "photo",
-      style: { width: "100%", height: "100%", objectFit: "cover" }
+      style: {
+        width: "100%",
+        height: "100%",
+        objectFit: "cover"
+      }
     })
   );
 }
@@ -183,16 +164,13 @@ function ProfilePhoto() {
 
 function ChatWidget() {
   const [open, setOpen] = useState(false);
+
   const [messages, setMessages] = useState([
-    {
-      sender: "bot",
-      text: "Привет 👋 Как вас зовут?"
-    }
+    { sender: "bot", text: "Привет 👋 Как вас зовут?" }
   ]);
 
   const [input, setInput] = useState("");
   const [step, setStep] = useState(0);
-  const messagesEndRef = React.useRef(null);
 
   const [lead, setLead] = useState({
     name: "",
@@ -200,6 +178,8 @@ function ChatWidget() {
     budget: "",
     contact: ""
   });
+
+  const messagesEndRef = React.useRef(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -215,21 +195,30 @@ function ChatWidget() {
 
     if (step === 0) {
       setLead(l => ({ ...l, name: text }));
-      setMessages(prev => [...prev, { sender: "bot", text: "Что нужно?" }]);
+      setMessages(prev => [
+        ...prev,
+        { sender: "bot", text: "Что вам нужно?" }
+      ]);
       setStep(1);
       return;
     }
 
     if (step === 1) {
       setLead(l => ({ ...l, service: text }));
-      setMessages(prev => [...prev, { sender: "bot", text: "Бюджет?" }]);
+      setMessages(prev => [
+        ...prev,
+        { sender: "bot", text: "Бюджет?" }
+      ]);
       setStep(2);
       return;
     }
 
     if (step === 2) {
       setLead(l => ({ ...l, budget: text }));
-      setMessages(prev => [...prev, { sender: "bot", text: "Контакт?" }]);
+      setMessages(prev => [
+        ...prev,
+        { sender: "bot", text: "Контакт (телефон / email / MAX)" }
+      ]);
       setStep(3);
       return;
     }
@@ -271,7 +260,7 @@ function ChatWidget() {
     React.createElement(
       "div",
       { className: "chat-header" },
-      "AI помощник",
+      "AI Помощник",
       React.createElement(
         "button",
         { onClick: () => setOpen(false) },
@@ -315,12 +304,17 @@ function ChatWidget() {
 /* ================= APP ================= */
 
 function App() {
-  const [carouselOpen, setCarouselOpen] = useState(false);
-  const [message, setMessage] = useState(null);
+  const [modal, setModal] = useState(null);
+  const [carousel, setCarousel] = useState(false);
+
+  const contacts = {
+    phone: "89133149801",
+    email: "oksanchik2170@yandex.ru"
+  };
 
   const handleCardClick = (id) => {
-    if (id === "neiro") setCarouselOpen(true);
-    else setMessage("Кейсы отправлю в Telegram.");
+    if (id === "neiro") setCarousel(true);
+    else setModal("Кейсы отправлю по телефону или email");
   };
 
   return React.createElement(
@@ -331,42 +325,50 @@ function App() {
       "section",
       { className: "hero" },
       React.createElement("h1", null, "Оксана Баннова"),
+
+      React.createElement(
+        "p",
+        null,
+        "📱 MAX: " + contacts.phone
+      ),
+
+      React.createElement(
+        "p",
+        null,
+        "📧 Email: " + contacts.email
+      ),
+
       React.createElement(ProfilePhoto)
     ),
 
     React.createElement(
       "section",
       { className: "portfolio" },
-      portfolioItems.map(i =>
+      portfolioItems.map(item =>
         React.createElement(
           "div",
           {
-            key: i.id,
-            onClick: () => handleCardClick(i.id)
+            key: item.id,
+            onClick: () => handleCardClick(item.id)
           },
-          i.name
+          item.name
         )
       )
     ),
 
     React.createElement(CarouselModal, {
-      isOpen: carouselOpen,
-      onClose: () => setCarouselOpen(false)
+      isOpen: carousel,
+      onClose: () => setCarousel(false)
     }),
 
     React.createElement(MessageModal, {
-      message,
-      onClose: () => setMessage(null)
+      message: modal,
+      onClose: () => setModal(null)
     }),
 
     React.createElement(ChatWidget)
   );
 }
 
-/* ================= RENDER ================= */
-
-const root = ReactDOM.createRoot(
-  document.getElementById("root")
-);
-
-root.render(React.createElement(App));
+ReactDOM.createRoot(document.getElementById("root"))
+  .render(React.createElement(App));
