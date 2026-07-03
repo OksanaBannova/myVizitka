@@ -1,7 +1,10 @@
 const { useState, useEffect } = React;
 
+/* ================= SUPABASE ================= */
+
 const SUPABASE_URL = "https://eskauqttcvfxrbnvljyu.supabase.co";
-const SUPABASE_KEY = "sb_publishable_l0krKw0Ct33vQ0qKVznytw_YTFRiH_T";
+const SUPABASE_KEY =
+  "sb_publishable_l0krKw0Ct33vQ0qKVznytw_YTFRiH_T";
 
 const supabase = window.supabase.createClient(
   SUPABASE_URL,
@@ -30,30 +33,32 @@ async function saveLead(data) {
   }
 }
 
+/* ================= DATA ================= */
+
 const portfolioItems = [
   {
     id: "neiro",
     tag: "Нейрофото",
     name: "Семейные AI-портреты",
-    desc: "Нейрофото с художественной обработкой и ретушью."
+    desc: "AI-портреты с художественной обработкой."
   },
   {
     id: "site",
     tag: "AI-сайты",
     name: "Лендинги под ключ",
-    desc: "Продающие сайты с современным UI."
+    desc: "Современные продающие сайты."
   },
   {
     id: "bot",
-    tag: "MAX-боты",
+    tag: "Боты",
     name: "Автоматизация заявок",
-    desc: "AI-боты и автоматизация бизнеса."
+    desc: "AI-боты и бизнес-автоматизация."
   },
   {
     id: "market",
     tag: "Маркетплейсы",
     name: "Карточки товаров",
-    desc: "Карточки для Wildberries / Ozon."
+    desc: "Ozon / Wildberries инфографика."
   }
 ];
 
@@ -63,6 +68,8 @@ const chipsData = [
   { type: "bot", text: "Боты" },
   { type: "market", text: "Маркетплейсы" }
 ];
+
+/* ================= MODALS ================= */
 
 function MessageModal({ message, onClose }) {
   if (!message) return null;
@@ -74,13 +81,20 @@ function MessageModal({ message, onClose }) {
       "div",
       {
         className: "modal-content",
-        onClick: e => e.stopPropagation()
+        onClick: e => e.stopPropagation(),
+        style: {
+          background: "#111827",
+          padding: "24px",
+          borderRadius: "16px",
+          color: "#fff",
+          maxWidth: "420px"
+        }
       },
       React.createElement("h3", null, "Информация"),
       React.createElement("p", null, message),
       React.createElement(
         "button",
-        { className: "btn", onClick: onClose },
+        { className: "btn btn-primary", onClick: onClose },
         "Закрыть"
       )
     )
@@ -91,28 +105,40 @@ function CarouselModal({ isOpen, onClose }) {
   const [index, setIndex] = useState(0);
   const total = 22;
 
-  if (!isOpen) return null;
-
   const next = () => {
-    if (index < total - 1) setIndex(index + 1);
+    setIndex(i => (i < total - 1 ? i + 1 : i));
   };
 
   const prev = () => {
-    if (index > 0) setIndex(index - 1);
+    setIndex(i => (i > 0 ? i - 1 : i));
   };
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handler = (e) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowRight") next();
+      if (e.key === "ArrowLeft") prev();
+    };
+
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [isOpen]);
+
+  if (!isOpen) return null;
 
   return React.createElement(
     "div",
     { className: "modal active", onClick: onClose },
     React.createElement(
+      "span",
+      { className: "modal-close", onClick: onClose },
+      "×"
+    ),
+    React.createElement(
       "button",
-      {
-        className: "carousel-btn",
-        onClick: e => {
-          e.stopPropagation();
-          prev();
-        }
-      },
+      { className: "carousel-btn carousel-prev", onClick: prev },
       "‹"
     ),
     React.createElement(
@@ -123,22 +149,23 @@ function CarouselModal({ isOpen, onClose }) {
       },
       React.createElement("img", {
         src: `img/${index + 1}.jpg`,
-        style: { maxWidth: "100%" }
+        alt: "slide"
       })
     ),
     React.createElement(
       "button",
-      {
-        className: "carousel-btn",
-        onClick: e => {
-          e.stopPropagation();
-          next();
-        }
-      },
+      { className: "carousel-btn carousel-next", onClick: next },
       "›"
+    ),
+    React.createElement(
+      "div",
+      { className: "carousel-counter" },
+      `${index + 1} / ${total}`
     )
   );
 }
+
+/* ================= PROFILE ================= */
 
 function ProfilePhoto() {
   return React.createElement(
@@ -146,27 +173,26 @@ function ProfilePhoto() {
     { className: "photo-inner" },
     React.createElement("img", {
       src: "oksana.jpg",
-      style: {
-        width: "100%",
-        height: "100%",
-        objectFit: "cover"
-      }
+      alt: "photo",
+      style: { width: "100%", height: "100%", objectFit: "cover" }
     })
   );
 }
 
+/* ================= CHAT ================= */
+
 function ChatWidget() {
   const [open, setOpen] = useState(false);
-
   const [messages, setMessages] = useState([
     {
       sender: "bot",
-      text: "Привет 👋 Я AI-помощник Оксаны. Как вас зовут?"
+      text: "Привет 👋 Как вас зовут?"
     }
   ]);
 
   const [input, setInput] = useState("");
   const [step, setStep] = useState(0);
+  const messagesEndRef = React.useRef(null);
 
   const [lead, setLead] = useState({
     name: "",
@@ -175,68 +201,44 @@ function ChatWidget() {
     contact: ""
   });
 
-  const messagesEndRef = React.useRef(null);
-
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({
-      behavior: "smooth"
-    });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   async function sendMessage() {
     if (!input.trim()) return;
-    if (step === 4) return;
 
-    const userText = input.trim();
+    const text = input.trim();
 
-    setMessages(prev => [
-      ...prev,
-      { sender: "user", text: userText }
-    ]);
-
+    setMessages(prev => [...prev, { sender: "user", text }]);
     setInput("");
 
     if (step === 0) {
-      setLead(prev => ({ ...prev, name: userText }));
-      setMessages(prev => [
-        ...prev,
-        { sender: "bot", text: "Что вам нужно?" }
-      ]);
+      setLead(l => ({ ...l, name: text }));
+      setMessages(prev => [...prev, { sender: "bot", text: "Что нужно?" }]);
       setStep(1);
       return;
     }
 
     if (step === 1) {
-      setLead(prev => ({ ...prev, service: userText }));
-      setMessages(prev => [
-        ...prev,
-        { sender: "bot", text: "Какой бюджет?" }
-      ]);
+      setLead(l => ({ ...l, service: text }));
+      setMessages(prev => [...prev, { sender: "bot", text: "Бюджет?" }]);
       setStep(2);
       return;
     }
 
     if (step === 2) {
-      setLead(prev => ({ ...prev, budget: userText }));
-      setMessages(prev => [
-        ...prev,
-        { sender: "bot", text: "Оставьте контакт" }
-      ]);
+      setLead(l => ({ ...l, budget: text }));
+      setMessages(prev => [...prev, { sender: "bot", text: "Контакт?" }]);
       setStep(3);
       return;
     }
 
     if (step === 3) {
-      const finalLead = {
-        ...lead,
-        contact: userText
-      };
-
       const ok = await saveLead({
-        name: finalLead.name,
-        service: finalLead.service,
-        budget: Number(finalLead.budget) || 0,
-        contact: finalLead.contact,
+        ...lead,
+        contact: text,
+        budget: Number(lead.budget) || 0,
         status: "new"
       });
 
@@ -245,8 +247,8 @@ function ChatWidget() {
         {
           sender: "bot",
           text: ok
-            ? "Спасибо ❤️ Заявка сохранена."
-            : "Не удалось сохранить заявку."
+            ? "Спасибо ❤️ Заявка отправлена"
+            : "Ошибка отправки"
         }
       ]);
 
@@ -257,10 +259,7 @@ function ChatWidget() {
   if (!open) {
     return React.createElement(
       "button",
-      {
-        className: "chat-open-btn",
-        onClick: () => setOpen(true)
-      },
+      { className: "chat-open-btn", onClick: () => setOpen(true) },
       "💬"
     );
   }
@@ -272,12 +271,10 @@ function ChatWidget() {
     React.createElement(
       "div",
       { className: "chat-header" },
-      "AI Помощник",
+      "AI помощник",
       React.createElement(
         "button",
-        {
-          onClick: () => setOpen(false)
-        },
+        { onClick: () => setOpen(false) },
         "×"
       )
     ),
@@ -285,14 +282,14 @@ function ChatWidget() {
     React.createElement(
       "div",
       { className: "chat-messages" },
-      ...messages.map((msg, i) =>
+      messages.map((m, i) =>
         React.createElement(
           "div",
           {
             key: i,
-            className: `chat-message ${msg.sender}`
+            className: `chat-message ${m.sender}`
           },
-          msg.text
+          m.text
         )
       ),
       React.createElement("div", { ref: messagesEndRef })
@@ -304,9 +301,7 @@ function ChatWidget() {
       React.createElement("input", {
         value: input,
         onChange: e => setInput(e.target.value),
-        onKeyDown: e => {
-          if (e.key === "Enter") sendMessage();
-        }
+        onKeyDown: e => e.key === "Enter" && sendMessage()
       }),
       React.createElement(
         "button",
@@ -317,16 +312,15 @@ function ChatWidget() {
   );
 }
 
+/* ================= APP ================= */
+
 function App() {
   const [carouselOpen, setCarouselOpen] = useState(false);
   const [message, setMessage] = useState(null);
 
-  const handleCardClick = type => {
-    if (type === "neiro") {
-      setCarouselOpen(true);
-      return;
-    }
-    setMessage("Кейсы покажу лично.");
+  const handleCardClick = (id) => {
+    if (id === "neiro") setCarouselOpen(true);
+    else setMessage("Кейсы отправлю в Telegram.");
   };
 
   return React.createElement(
@@ -343,14 +337,14 @@ function App() {
     React.createElement(
       "section",
       { className: "portfolio" },
-      portfolioItems.map(item =>
+      portfolioItems.map(i =>
         React.createElement(
           "div",
           {
-            key: item.id,
-            onClick: () => handleCardClick(item.id)
+            key: i.id,
+            onClick: () => handleCardClick(i.id)
           },
-          item.name
+          i.name
         )
       )
     ),
@@ -369,5 +363,10 @@ function App() {
   );
 }
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
+/* ================= RENDER ================= */
+
+const root = ReactDOM.createRoot(
+  document.getElementById("root")
+);
+
 root.render(React.createElement(App));
