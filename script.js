@@ -34,6 +34,221 @@ async function saveLead(data) {
   }
 }
 
+// ============================================================
+//  ДАННЫЕ ДЛЯ ПРАЙС-ЛИСТОВ
+// ============================================================
+
+const personalPriceData = {
+  title: "📸 Тариф «Для себя»",
+  categories: [
+    {
+      name: "Нейрофотосессии",
+      items: [
+        { name: "НейроФото", price: "от 600 ₽" },
+        { name: "Портрет поколений", price: "от 600 ₽" },
+        { name: "Индивидуальная фотосессия", price: "от 100 ₽" },
+        { name: "Трендовое фото", price: "от 150 ₽" }
+      ]
+    },
+    {
+      name: "Семейные и детские",
+      items: [
+        { name: "Детская фотосессия", price: "от 100 ₽" },
+        { name: "Семейное фото", price: "от 450 ₽" }
+      ]
+    },
+    {
+      name: "Парные и Love Story",
+      items: [
+        { name: "Парная фотосессия", price: "от 250 ₽" },
+        { name: "Парная трендовая фотосессия", price: "от 300 ₽" }
+      ]
+    },
+    {
+      name: "Дополнительные услуги",
+      items: [
+        { name: "Замена фона", price: "от 50 ₽" },
+        { name: "Фото по вашему запросу", price: "от 150 ₽" }
+      ]
+    },
+    {
+      name: "🎁 Подарочные сертификаты",
+      items: [
+        { name: "Сертификат на фотосессию", price: "от 1 500 ₽" },
+        { name: "Сертификат на нейрофото", price: "от 2 000 ₽" }
+      ]
+    }
+  ]
+};
+
+const businessPriceData = {
+  title: "🏢 Тариф «Для бизнеса»",
+  categories: [
+    {
+      name: "AI КОНТЕНТ",
+      items: [
+        { name: "AI Фото товара", price: "от 2 900 ₽", desc: "До 10 изображений, любой фон, для маркетплейсов" },
+        { name: "AI Фото для личного бренда", price: "5 900 ₽", desc: "30 фото, до 10 образов, высокое качество" },
+        { name: "AI Фото команды компании", price: "от 9 900 ₽", desc: "Единый стиль для руководителей и сотрудников" },
+        { name: "Карточка товара Premium", price: "3 500 ₽", desc: "Инфографика, SEO-текст, дизайн" },
+        { name: "Комплект карточек", price: "14 900 ₽", desc: "До 5 товаров" }
+      ]
+    },
+    {
+      name: "AI САЙТЫ",
+      items: [
+        { name: "Landing Page", price: "29 900 ₽", desc: "Современный дизайн, адаптация, форма заявок, SEO" },
+        { name: "Корпоративный сайт", price: "59 900 ₽", desc: "До 10 страниц, CMS, анимация, форма заявок" },
+        { name: "SaaS / CRM", price: "от 120 000 ₽", desc: "Авторизация, личный кабинет, БД, админ-панель" }
+      ]
+    },
+    {
+      name: "AI АВТОМАТИЗАЦИЯ",
+      items: [
+        { name: "AI Консультант на сайт", price: "24 900 ₽", desc: "Обучение на данных компании, ответы 24/7" },
+        { name: "Telegram / WhatsApp bot", price: "от 39 900 ₽", desc: "Приём заявок, FAQ, запись клиентов" },
+        { name: "AI Отдел продаж", price: "от 69 900 ₽", desc: "Квалификация, CRM, аналитика" }
+      ]
+    },
+    {
+      name: "ДОПОЛНИТЕЛЬНЫЕ УСЛУГИ",
+      items: [
+        { name: "Логотип", price: "4 900 ₽" },
+        { name: "Фирменный стиль", price: "9 900 ₽" },
+        { name: "Баннеры", price: "990 ₽ / шт" },
+        { name: "Рекламные креативы", price: "1 500 ₽ / шт" }
+      ]
+    },
+    {
+      name: "🚀 ГОТОВЫЕ ПАКЕТЫ",
+      items: [
+        { name: "START BUSINESS", price: "39 900 ₽", desc: "Лендинг + AI-консультант + форма заявок" },
+        { name: "BUSINESS PRO", price: "79 900 ₽", desc: "Корпоративный сайт + AI-консультант + 10 карточек" },
+        { name: "DIGITAL BUSINESS", price: "149 900 ₽", desc: "SaaS/CRM + AI-консультант + AI-фотосессия + фирмстиль" }
+      ]
+    }
+  ]
+};
+
+// ============================================================
+//  КОМПОНЕНТ ПРАЙС-МОДАЛКИ
+// ============================================================
+
+function PriceModal({ isOpen, onClose }) {
+  const [view, setView] = React.useState('selector');
+  const [direction, setDirection] = React.useState('');
+
+  if (!isOpen) return null;
+
+  const handleSelect = (type) => {
+    setDirection('slide-in');
+    setTimeout(() => {
+      setView(type);
+    }, 50);
+  };
+
+  const handleBack = () => {
+    setDirection('slide-out');
+    setTimeout(() => {
+      setView('selector');
+      setDirection('');
+    }, 300);
+  };
+
+  const renderPriceList = (data) => {
+    return React.createElement(
+      "div",
+      { className: `price-slide active ${direction}` },
+      React.createElement(
+        "div",
+        { className: "price-header" },
+        React.createElement(
+          "button",
+          { className: "back-btn", onClick: handleBack },
+          "← Назад"
+        ),
+        React.createElement("h2", null, data.title)
+      ),
+      data.categories.map((cat, idx) =>
+        React.createElement(
+          "div",
+          { className: "price-category", key: idx },
+          React.createElement("h3", null, cat.name),
+          React.createElement(
+            "div",
+            { className: "price-grid" },
+            cat.items.map((item, i) =>
+              React.createElement(
+                "div",
+                { className: "price-card", key: i },
+                React.createElement("div", { className: "name" }, item.name),
+                React.createElement("div", { className: "price-tag" }, item.price),
+                item.desc && React.createElement("div", { className: "price-desc" }, item.desc)
+              )
+            )
+          )
+        )
+      )
+    );
+  };
+
+  return React.createElement(
+    "div",
+    { className: "price-modal-overlay active", onClick: (e) => {
+      if (e.target === e.currentTarget) onClose();
+    }},
+    React.createElement(
+      "div",
+      { className: "price-modal" },
+      React.createElement(
+        "button",
+        { className: "modal-close-btn", onClick: onClose },
+        "✕"
+      ),
+      React.createElement(
+        "div",
+        { className: "price-modal-content" },
+        React.createElement(
+          "div",
+          { className: "price-slider" },
+          view === 'selector' && React.createElement(
+            "div",
+            { className: "price-selector" },
+            React.createElement("h2", null, "💰 Прайс-лист"),
+            React.createElement("p", null, "Выберите интересующее направление"),
+            React.createElement(
+              "div",
+              { className: "selector-grid" },
+              React.createElement(
+                "div",
+                { className: "selector-card", onClick: () => handleSelect('personal') },
+                React.createElement("span", { className: "emoji" }, "👤"),
+                React.createElement("h3", null, "Для себя"),
+                React.createElement("p", null, "Нейрофотосессии, портреты, подарки"),
+                React.createElement("span", { className: "arrow" }, "→ Выбрать")
+              ),
+              React.createElement(
+                "div",
+                { className: "selector-card", onClick: () => handleSelect('business') },
+                React.createElement("span", { className: "emoji" }, "🏢"),
+                React.createElement("h3", null, "Для бизнеса"),
+                React.createElement("p", null, "AI, сайты, автоматизация"),
+                React.createElement("span", { className: "arrow" }, "→ Выбрать")
+              )
+            )
+          ),
+          view === 'personal' && renderPriceList(personalPriceData),
+          view === 'business' && renderPriceList(businessPriceData)
+        )
+      )
+    )
+  );
+}
+
+// ============================================================
+//  ОСТАЛЬНЫЕ КОМПОНЕНТЫ
+// ============================================================
+
 const portfolioItems = [
   {
     id: "neiro",
@@ -104,10 +319,10 @@ function MessageModal({ message, onClose }) {
   );
 }
 
-// Компонент галереи (сетка + карусель)
+// Компонент галереи
 function GalleryModal({ isOpen, onClose, photos, title }) {
   const [currentIndex, setCurrentIndex] = React.useState(0);
-  const [viewMode, setViewMode] = React.useState('grid'); // 'grid' или 'carousel'
+  const [viewMode, setViewMode] = React.useState('grid');
   const [touchStart, setTouchStart] = React.useState(null);
   const total = photos.length;
 
@@ -162,7 +377,6 @@ function GalleryModal({ isOpen, onClose, photos, title }) {
     { className: "modal active", onClick: closeGallery },
     React.createElement("span", { className: "modal-close", onClick: closeGallery }, "×"),
     
-    // Режим сетки
     viewMode === 'grid' && React.createElement(
       "div",
       {
@@ -243,7 +457,6 @@ function GalleryModal({ isOpen, onClose, photos, title }) {
       )
     ),
 
-    // Режим карусели
     viewMode === 'carousel' && React.createElement(
       React.Fragment,
       null,
@@ -366,7 +579,7 @@ function ProfilePhoto() {
   );
 }
 
-// Компонент ChatWidget (улучшенный)
+// Компонент ChatWidget
 function ChatWidget() {
   const [open, setOpen] = React.useState(false);
   const [messages, setMessages] = React.useState([
@@ -380,14 +593,12 @@ function ChatWidget() {
   const messagesEndRef = React.useRef(null);
   const inputRef = React.useRef(null);
 
-  // Автопрокрутка к последнему сообщению
   React.useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
   }, [messages]);
 
-  // Фокус на поле ввода при открытии
   React.useEffect(() => {
     if (open && inputRef.current) {
       setTimeout(() => {
@@ -399,42 +610,30 @@ function ChatWidget() {
   const getAIResponse = (userMessage) => {
     const msg = userMessage.toLowerCase();
     
-    // Ответы про нейрофото
     if (msg.includes('нейрофото') || msg.includes('фото') || msg.includes('портрет')) {
       return "📸 Нейрофото — это художественные AI-портреты с глубокой проработкой деталей.\n\nЯ создаю:\n• Семейные портреты\n• Фото для соцсетей\n• Художественные коллажи\n• Обработку с ретушью\n\nСтоимость от 2000₽ за одну работу. Хотите попробовать? Напишите мне на почту oksanchik2170@yandex.ru!";
     }
     
-    // Ответы про сайты
     if (msg.includes('сайт') || msg.includes('лендинг') || msg.includes('страница')) {
       return "💻 Я создаю продающие AI-сайты и лендинги под ключ:\n\n• Современный дизайн\n• Анимации и эффекты\n• Формы заявок\n• Адаптив под телефоны\n• Интеграция с мессенджерами\n\nСтоимость от 15 000₽. Расскажите о вашем проекте — я предложу лучшее решение!";
     }
     
-    // Ответы про ботов
     if (msg.includes('бот') || msg.includes('макс бот') || msg.includes('автоматизация')) {
       return "🤖 Макс боты — это моя новая разработка!\n\nСкоро здесь появятся умные боты для:\n• Автоматизации заявок\n• Ответов на вопросы клиентов\n• Сбора лидов\n• Консультаций в мессенджерах\n\nЯ активно работаю над этим проектом. Чтобы не пропустить запуск — подпишитесь на обновления!";
     }
     
-    // Ответы про маркетплейсы
-    if (msg.includes('карточк') || msg.includes('маркетплейс') || msg.includes('wildberries') || msg.includes('ozon') || msg.includes('вб')) {
+    if (msg.includes('карточк') || msg.includes('маркетплейс') || msg.includes('wildberries') || msg.includes('ozon')) {
       return "🛍️ Я создаю карточки для маркетплейсов:\n\n• AI-фоны и атмосфера\n• Инфографика\n• Акцент на выгодах\n• Стиль под ваш бренд\n\nСтоимость от 3000₽ за карточку. Расскажите о вашем товаре — сделаем крутой визуал!";
     }
     
-    // Ответы про цены
-    if (msg.includes('цена') || msg.includes('стоимость') || msg.includes('сколько') || msg.includes('скока') || msg.includes('прайс')) {
+    if (msg.includes('цена') || msg.includes('стоимость') || msg.includes('сколько') || msg.includes('прайс')) {
       return "💰 Цены на услуги:\n\n📸 Нейрофото — от 2000₽\n💻 AI-сайты — от 15 000₽\n🛍️ Карточки — от 3000₽\n🤖 Макс боты — в разработке\n\nТочная стоимость зависит от задачи. Напишите мне на почту oksanchik2170@yandex.ru — обсудим детали!";
     }
     
-    // Ответы про сроки
-    if (msg.includes('срок') || msg.includes('сколько времени') || msg.includes('когда')) {
-      return "⏱️ Средние сроки:\n\n• Нейрофото — 1-3 дня\n• AI-сайт — 5-10 дней\n• Карточки — 2-4 дня\n• Макс боты — скоро!\n\nВсё зависит от сложности проекта. Присылайте задачу — скажу точные сроки!";
-    }
-    
-    // Приветствия
     if (msg.includes('привет') || msg.includes('здравств') || msg.includes('добрый')) {
       return "Привет! 👋 Рада вас видеть!\n\nЧем могу помочь? Я отвечу на вопросы о:\n• Нейрофото 📸\n• AI-сайтах 💻\n• Макс ботах 🤖\n• Карточках 🛍️\n\nИли просто расскажу о себе и проектах!";
     }
     
-    // Если ничего не подошло
     return "Спасибо за ваш вопрос! 🙏\n\nМогу предложить:\n• Посмотреть мои работы в портфолио\n• Заказать нейрофото, сайт или карточки\n• Узнать больше о предстоящих проектах\n\nЕсли не нашли ответ — напишите мне лично на почту oksanchik2170@yandex.ru, я обязательно отвечу!";
   };
 
@@ -529,20 +728,24 @@ function ChatWidget() {
   );
 }
 
-// Компонент App
+// ============================================================
+//  ГЛАВНЫЙ КОМПОНЕНТ APP
+// ============================================================
+
 function App() {
   const [galleryConfig, setGalleryConfig] = React.useState(null);
   const [message, setMessage] = React.useState(null);
+  const [isPriceOpen, setIsPriceOpen] = React.useState(false);
 
   const handleCardClick = (type) => {
     if (type === "neiro") {
-  const photos = [];
-  for (let i = 1; i <= 55; i++) {
-    photos.push(`img/${i}.jpg`);
-  }
-  setGalleryConfig({ photos, title: "Нейрофото — галерея работ" });
-  return;
-}
+      const photos = [];
+      for (let i = 1; i <= 55; i++) {
+        photos.push(`img/${i}.jpg`);
+      }
+      setGalleryConfig({ photos, title: "Нейрофото — галерея работ" });
+      return;
+    }
 
     if (type === "market") {
       const photos = [];
@@ -642,6 +845,15 @@ function App() {
               onClick: scrollToPortfolio
             },
             "Портфолио"
+          ),
+          React.createElement(
+            "button",
+            {
+              className: "btn btn-primary",
+              onClick: () => setIsPriceOpen(true),
+              style: { background: "linear-gradient(120deg, #ff5c97, #ff9a5e)" }
+            },
+            "💰 Прайс-лист"
           )
         )
       ),
@@ -794,10 +1006,19 @@ function App() {
       message: message,
       onClose: () => setMessage(null)
     }),
+    // Прайс-лист
+    React.createElement(PriceModal, {
+      isOpen: isPriceOpen,
+      onClose: () => setIsPriceOpen(false)
+    }),
     // Чат
     React.createElement(ChatWidget, null)
   );
 }
+
+// ============================================================
+//  ЗАПУСК
+// ============================================================
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(React.createElement(App));

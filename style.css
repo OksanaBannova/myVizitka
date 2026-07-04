@@ -66,8 +66,8 @@ button {
   position: absolute;
   inset: -100px;
   background:
-    radial-gradient(circle, rgba(255,92,151,.16), transparent 50%),
-    radial-gradient(circle at right, rgba(33,212,253,.16), transparent 45%);
+    radial-gradient(circle, rgba(255, 92, 151, 0.16), transparent 50%),
+    radial-gradient(circle at right, rgba(33, 212, 253, 0.16), transparent 45%);
   z-index: 0;
 }
 
@@ -90,7 +90,7 @@ button {
   color: var(--muted);
   padding: 6px 12px;
   border-radius: 999px;
-  background: rgba(255,255,255,.03);
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border);
   width: fit-content;
 }
@@ -106,7 +106,7 @@ button {
 .hello {
   font-size: 13px;
   color: var(--accent2);
-  letter-spacing: .1em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
@@ -118,7 +118,8 @@ h1 {
 h1 span {
   background: linear-gradient(120deg, var(--accent2), var(--accent));
   -webkit-background-clip: text;
-  color: transparent;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .subtitle {
@@ -136,19 +137,19 @@ h1 span {
 .chip {
   border-radius: 999px;
   border: 1px solid var(--border);
-  background: rgba(255,255,255,.03);
+  background: rgba(255, 255, 255, 0.03);
   padding: 10px 14px;
   font-size: 13px;
   display: flex;
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  transition: .2s;
+  transition: 0.2s;
 }
 
 .chip:hover {
   transform: translateY(-2px);
-  border-color: rgba(33,212,253,.8);
+  border-color: rgba(33, 212, 253, 0.8);
 }
 
 .chip-dot {
@@ -160,7 +161,7 @@ h1 span {
 
 .section-title {
   font-size: 12px;
-  letter-spacing: .2em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -195,7 +196,7 @@ h1 span {
   display: flex;
   gap: 8px;
   align-items: center;
-  transition: .2s;
+  transition: 0.2s;
 }
 
 .btn:hover {
@@ -248,7 +249,7 @@ h1 span {
 .photo-glow {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle, rgba(255,255,255,.15), transparent 60%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.15), transparent 60%);
 }
 
 .badge {
@@ -259,7 +260,7 @@ h1 span {
 .badge-inner {
   padding: 8px 14px;
   border-radius: 999px;
-  background: rgba(255,255,255,.04);
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--border);
   font-size: 12px;
 }
@@ -276,8 +277,8 @@ h1 span {
 .accent-pill {
   padding: 14px;
   border-radius: 18px;
-  background: rgba(255,255,255,.03);
-  border: 1px dashed rgba(255,255,255,.12);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(255, 255, 255, 0.12);
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -344,10 +345,10 @@ h1 span {
 .portfolio-item {
   border-radius: 18px;
   padding: 16px;
-  background: rgba(255,255,255,.03);
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border);
   cursor: pointer;
-  transition: .2s;
+  transition: 0.2s;
   min-height: 150px;
 }
 
@@ -358,7 +359,7 @@ h1 span {
 .portfolio-tag {
   color: var(--accent2);
   font-size: 12px;
-  letter-spacing: .12em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
@@ -399,13 +400,13 @@ h1 span {
 .contact-btn {
   padding: 12px 16px;
   border-radius: 999px;
-  background: rgba(255,255,255,.03);
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border);
   display: flex;
   align-items: center;
   gap: 8px;
   text-decoration: none;
-  transition: .2s;
+  transition: 0.2s;
 }
 
 .contact-btn:hover {
@@ -446,7 +447,7 @@ h1 span {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,.95);
+  background: rgba(0, 0, 0, 0.95);
   z-index: 999;
   justify-content: center;
   align-items: center;
@@ -485,7 +486,7 @@ h1 span {
   border: none;
   cursor: pointer;
   font-size: 28px;
-  background: rgba(255,255,255,.1);
+  background: rgba(255, 255, 255, 0.1);
   color: white;
 }
 
@@ -504,7 +505,7 @@ h1 span {
   transform: translateX(-50%);
   padding: 8px 16px;
   border-radius: 999px;
-  background: rgba(255,255,255,.1);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 /* ================= FLOATING CTA ================= */
@@ -520,7 +521,7 @@ h1 span {
   background: linear-gradient(120deg, var(--accent2), var(--accent));
   color: #050816;
   font-weight: 700;
-  box-shadow: 0 16px 40px rgba(33,212,253,.35);
+  box-shadow: 0 16px 40px rgba(33, 212, 253, 0.35);
 }
 
 /* ================= TABLET ================= */
@@ -609,10 +610,10 @@ h1 span {
   width: min(380px, calc(100vw - 20px));
   height: 520px;
   background: rgba(8, 10, 24, 0.98);
-  border: 1px solid rgba(255,255,255,.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 24px;
   backdrop-filter: blur(20px);
-  box-shadow: 0 20px 60px rgba(0,0,0,.55);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
   display: flex;
   flex-direction: column;
   z-index: 999;
@@ -654,7 +655,7 @@ h1 span {
 }
 
 .chat-message.bot {
-  background: rgba(255,255,255,.06);
+  background: rgba(255, 255, 255, 0.06);
   color: white;
   align-self: flex-start;
 }
@@ -669,13 +670,13 @@ h1 span {
   padding: 14px;
   display: flex;
   gap: 8px;
-  border-top: 1px solid rgba(255,255,255,.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .chat-input {
   flex: 1;
-  background: rgba(255,255,255,.05);
-  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 14px;
   padding: 12px;
   color: white;
@@ -700,7 +701,7 @@ h1 span {
   border: none;
   cursor: pointer;
   font-size: 26px;
-  box-shadow: 0 16px 40px rgba(33,212,253,.35);
+  box-shadow: 0 16px 40px rgba(33, 212, 253, 0.35);
   background: linear-gradient(120deg, #21d4fd, #ff5c97);
   z-index: 998;
 }
@@ -717,5 +718,308 @@ h1 span {
   .chat-open-btn {
     right: 14px;
     bottom: 76px;
+  }
+}
+
+/* ============================================================
+   ПРАЙС-ЛИСТ
+   ============================================================ */
+
+.price-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(12px);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.price-modal-overlay.active {
+  display: flex;
+}
+
+.price-modal {
+  background: #0a0d1f;
+  border-radius: 32px;
+  max-width: 1000px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  position: relative;
+}
+
+.price-modal::-webkit-scrollbar {
+  width: 4px;
+}
+.price-modal::-webkit-scrollbar-track {
+  background: transparent;
+}
+.price-modal::-webkit-scrollbar-thumb {
+  background: #ff5c97;
+  border-radius: 10px;
+}
+
+.modal-close-btn {
+  position: sticky;
+  top: 12px;
+  right: 20px;
+  float: right;
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  color: var(--muted);
+  font-size: 28px;
+  cursor: pointer;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+  z-index: 10;
+  margin: 12px 16px 0 0;
+}
+
+.modal-close-btn:hover {
+  background: rgba(255, 92, 151, 0.2);
+  color: #fff;
+}
+
+.price-modal-content {
+  padding: 20px 32px 40px;
+}
+
+/* Выбор тарифа */
+.price-selector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 0 10px;
+}
+
+.price-selector h2 {
+  font-size: 28px;
+  font-weight: 700;
+  background: linear-gradient(120deg, #21d4fd, #ff5c97);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.5px;
+}
+
+.price-selector p {
+  color: var(--muted);
+  font-size: 15px;
+  margin-bottom: 20px;
+}
+
+.selector-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.selector-card {
+  background: rgba(10, 14, 40, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 28px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.selector-card:hover {
+  transform: translateY(-4px);
+  border-color: #21d4fd;
+  box-shadow: 0 12px 30px rgba(33, 212, 253, 0.2);
+}
+
+.selector-card .emoji {
+  font-size: 40px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.selector-card h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+
+.selector-card p {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.selector-card .arrow {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 6px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  font-size: 13px;
+  color: #21d4fd;
+  transition: 0.2s;
+}
+
+.selector-card:hover .arrow {
+  background: rgba(33, 212, 253, 0.15);
+  border-color: #21d4fd;
+}
+
+/* Слайдер */
+.price-slider {
+  position: relative;
+  overflow: hidden;
+  min-height: 400px;
+}
+
+.price-slide {
+  transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.4s ease;
+  will-change: transform, opacity;
+}
+
+.price-slide.slide-in {
+  transform: translateX(30px);
+  opacity: 0;
+}
+
+.price-slide.slide-out {
+  transform: translateX(-30px);
+  opacity: 0;
+}
+
+.price-slide.active {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+/* Контент прайсов */
+.price-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.price-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.back-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--muted);
+  padding: 6px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border-color: #21d4fd;
+}
+
+.price-category {
+  margin-bottom: 28px;
+}
+
+.price-category h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  color: #21d4fd;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.price-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.price-card {
+  background: rgba(10, 14, 40, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 16px 18px;
+  transition: all 0.25s ease;
+}
+
+.price-card:hover {
+  border-color: rgba(33, 212, 253, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.price-card .name {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--text);
+}
+
+.price-card .price-tag {
+  font-size: 16px;
+  font-weight: 700;
+  color: #21d4fd;
+  margin-bottom: 4px;
+}
+
+.price-card .price-desc {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* Адаптация прайса */
+@media (max-width: 860px) {
+  .price-modal-content {
+    padding: 16px 18px 30px;
+  }
+  .selector-grid {
+    grid-template-columns: 1fr;
+    max-width: 340px;
+  }
+  .price-grid {
+    grid-template-columns: 1fr;
+  }
+  .modal-close-btn {
+    top: 8px;
+    right: 10px;
+    width: 38px;
+    height: 38px;
+    font-size: 22px;
+    margin: 8px 10px 0 0;
+  }
+}
+
+@media (max-width: 550px) {
+  .price-selector h2 {
+    font-size: 22px;
+  }
+  .price-header h2 {
+    font-size: 20px;
   }
 }
