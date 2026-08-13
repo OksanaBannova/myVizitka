@@ -1,5 +1,6 @@
 const SUPABASE_URL = "https://eskauqttcvfxrbnvljyu.supabase.co";
 const SUPABASE_KEY = "sb_publishable_l0krKw0Ct33vQ0qKVznytw_YTFRiH_T";
+const AI_CHAT_URL = "https://eskauqttcvfxrbnvljyu.supabase.co/functions/v1/ai-chat";
 
 const supabase = window.supabase.createClient(
   SUPABASE_URL,
