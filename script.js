@@ -585,7 +585,7 @@ function ChatWidget() {
   const [messages, setMessages] = React.useState([
     {
       sender: "bot",
-      text: "Привет 👋 Я AI-помощник Оксаны. Чем могу помочь?\n\nЗадайте мне любой вопрос о:\n• Нейрофото 📸\n• AI-сайтах 💻\n• Макс ботах 🤖\n• Карточках для маркетплейсов 🛍️"
+      text: "Привет 👋 Я AI-помощник Оксаны — отвечу на вопросы о нейрофото, сайтах, карточках и ботах. Могу сразу принять заявку! 😊"
     }
   ]);
   const [input, setInput] = React.useState("");
@@ -607,125 +607,44 @@ function ChatWidget() {
     }
   }, [open]);
 
-  const getAIResponse = (userMessage) => {
-    const msg = userMessage.toLowerCase();
-    
-    if (msg.includes('нейрофото') || msg.includes('фото') || msg.includes('портрет')) {
-      return "📸 Нейрофото — это художественные AI-портреты с глубокой проработкой деталей.\n\nЯ создаю:\n• Семейные портреты\n• Фото для соцсетей\n• Художественные коллажи\n• Обработку с ретушью\n\nСтоимость от 2000₽ за одну работу. Хотите попробовать? Напишите мне на почту oksanchik2170@yandex.ru!";
+  
+
+  const callAI = async (userText, history) => {
+    try {
+      const res = await fetch(AI_CHAT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: userText, history }),
+      });
+      const data = await res.json();
+      if (data.error) {
+        return "😔 Что-то пошло не так. Попробуйте ещё раз или напишите на почту oksanchik2170@yandex.ru";
+      }
+      return data.reply;
+    } catch (err) {
+      return "😔 Не удалось связаться с помощником. Напишите на почту oksanchik2170@yandex.ru";
     }
-    
-    if (msg.includes('сайт') || msg.includes('лендинг') || msg.includes('страница')) {
-      return "💻 Я создаю продающие AI-сайты и лендинги под ключ:\n\n• Современный дизайн\n• Анимации и эффекты\n• Формы заявок\n• Адаптив под телефоны\n• Интеграция с мессенджерами\n\nСтоимость от 15 000₽. Расскажите о вашем проекте — я предложу лучшее решение!";
-    }
-    
-    if (msg.includes('бот') || msg.includes('макс бот') || msg.includes('автоматизация')) {
-      return "🤖 Макс боты — это моя новая разработка!\n\nСкоро здесь появятся умные боты для:\n• Автоматизации заявок\n• Ответов на вопросы клиентов\n• Сбора лидов\n• Консультаций в мессенджерах\n\nЯ активно работаю над этим проектом. Чтобы не пропустить запуск — подпишитесь на обновления!";
-    }
-    
-    if (msg.includes('карточк') || msg.includes('маркетплейс') || msg.includes('wildberries') || msg.includes('ozon')) {
-      return "🛍️ Я создаю карточки для маркетплейсов:\n\n• AI-фоны и атмосфера\n• Инфографика\n• Акцент на выгодах\n• Стиль под ваш бренд\n\nСтоимость от 3000₽ за карточку. Расскажите о вашем товаре — сделаем крутой визуал!";
-    }
-    
-    if (msg.includes('цена') || msg.includes('стоимость') || msg.includes('сколько') || msg.includes('прайс')) {
-      return "💰 Цены на услуги:\n\n📸 Нейрофото — от 2000₽\n💻 AI-сайты — от 15 000₽\n🛍️ Карточки — от 3000₽\n🤖 Макс боты — в разработке\n\nТочная стоимость зависит от задачи. Напишите мне на почту oksanchik2170@yandex.ru — обсудим детали!";
-    }
-    
-    if (msg.includes('привет') || msg.includes('здравств') || msg.includes('добрый')) {
-      return "Привет! 👋 Рада вас видеть!\n\nЧем могу помочь? Я отвечу на вопросы о:\n• Нейрофото 📸\n• AI-сайтах 💻\n• Макс ботах 🤖\n• Карточках 🛍️\n\nИли просто расскажу о себе и проектах!";
-    }
-    
-    return "Спасибо за ваш вопрос! 🙏\n\nМогу предложить:\n• Посмотреть мои работы в портфолио\n• Заказать нейрофото, сайт или карточки\n• Узнать больше о предстоящих проектах\n\nЕсли не нашли ответ — напишите мне лично на почту oksanchik2170@yandex.ru, я обязательно отвечу!";
   };
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     if (!input.trim() || isProcessing) return;
 
     const userText = input.trim();
-    
-    setMessages(prev => [...prev, { sender: "user", text: userText }]);
+    const newMessages = [...messages, { sender: "user", text: userText }];
+    setMessages(newMessages);
     setInput("");
     setIsProcessing(true);
 
-    setTimeout(() => {
-      const botResponse = getAIResponse(userText);
-      setMessages(prev => [...prev, { sender: "bot", text: botResponse }]);
-      setIsProcessing(false);
-    }, 500 + Math.random() * 400);
+    // Передаём историю (без системных сообщений)
+    const history = newMessages
+      .filter((m) => m.text && m.text.trim())
+      .slice(-10)
+      .map((m) => ({ sender: m.sender, text: m.text }));
+
+    const botResponse = await callAI(userText, history);
+    setMessages((prev) => [...prev, { sender: "bot", text: botResponse }]);
+    setIsProcessing(false);
   };
-
-  if (!open) {
-    return React.createElement(
-      "button",
-      {
-        className: "chat-open-btn",
-        onClick: () => setOpen(true)
-      },
-      "💬"
-    );
-  }
-
-  return React.createElement(
-    "div",
-    { className: "chat-widget" },
-    React.createElement(
-      "div",
-      { className: "chat-header" },
-      "AI Помощник",
-      React.createElement(
-        "button",
-        {
-          className: "chat-close",
-          onClick: () => setOpen(false)
-        },
-        "×"
-      )
-    ),
-    React.createElement(
-      "div",
-      { className: "chat-messages" },
-      messages.map((msg, i) =>
-        React.createElement(
-          "div",
-          {
-            key: i,
-            className: `chat-message ${msg.sender}`
-          },
-          msg.text.split('\n').map((line, j) =>
-            React.createElement("div", { key: j, style: { marginBottom: j < msg.text.split('\n').length - 1 ? '4px' : '0' } }, line)
-          )
-        )
-      ),
-      isProcessing && React.createElement(
-        "div",
-        { className: "chat-message bot", style: { opacity: 0.6 } },
-        "✍️ Печатает..."
-      ),
-      React.createElement("div", { ref: messagesEndRef })
-    ),
-    React.createElement(
-      "div",
-      { className: "chat-input-wrap" },
-      React.createElement("input", {
-        ref: inputRef,
-        className: "chat-input",
-        value: input,
-        placeholder: "Введите сообщение...",
-        onChange: e => setInput(e.target.value),
-        onKeyDown: e => {
-          if (e.key === "Enter") sendMessage();
-        }
-      }),
-      React.createElement(
-        "button",
-        {
-          className: "chat-send",
-          onClick: sendMessage,
-          disabled: isProcessing
-        },
-        "➤"
-      )
-    )
-  );
 }
 
 // ============================================================
