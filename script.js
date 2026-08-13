@@ -580,8 +580,7 @@ function ProfilePhoto() {
   );
 }
 
-// Компонент ChatWidget (исправленный)
-// Компонент ChatWidget (исправленный)
+// Компонент ChatWidget (с упрощённым доступом)
 function ChatWidget() {
   const [open, setOpen] = React.useState(false);
   const [messages, setMessages] = React.useState([
@@ -609,24 +608,91 @@ function ChatWidget() {
     }
   }, [open]);
 
+  // Локальные ответы (если AI не работает)
+  const getLocalResponse = (userText) => {
+    const text = userText.toLowerCase();
+    
+    if (text.includes('нейрофото') || text.includes('фото') || text.includes('портрет')) {
+      return "📸 Нейрофото — это художественные AI-портреты с глубокой проработкой деталей.\n\nЯ создаю:\n• Семейные портреты\n• Фото для соцсетей\n• Художественные коллажи\n• Обработку с ретушью\n\nСтоимость от 600 ₽. Хотите попробовать? Напишите мне на почту oksanchik2170@yandex.ru!";
+    }
+    
+    if (text.includes('сайт') || text.includes('лендинг') || text.includes('страница')) {
+      return "💻 Я создаю продающие AI-сайты и лендинги под ключ:\n\n• Современный дизайн\n• Анимации и эффекты\n• Формы заявок\n• Адаптив под телефоны\n• Интеграция с мессенджерами\n\nСтоимость от 29 900 ₽. Расскажите о вашем проекте — я предложу лучшее решение!";
+    }
+    
+    if (text.includes('бот') || text.includes('макс') || text.includes('автоматизация')) {
+      return "🤖 Макс боты — это моя новая разработка!\n\nУмные боты для:\n• Автоматизации заявок\n• Ответов на вопросы клиентов\n• Сбора лидов\n• Консультаций в мессенджерах\n\nСтоимость от 39 900 ₽. Чтобы не пропустить запуск — подпишитесь на обновления!";
+    }
+    
+    if (text.includes('карточк') || text.includes('маркетплейс') || text.includes('wildberries') || text.includes('ozon') || text.includes('вб')) {
+      return "🛍️ Я создаю карточки для маркетплейсов:\n\n• AI-фоны и атмосфера\n• Инфографика\n• Акцент на выгодах\n• Стиль под ваш бренд\n\nСтоимость от 3 500 ₽ за карточку. Расскажите о вашем товаре — сделаем крутой визуал!";
+    }
+    
+    if (text.includes('цена') || text.includes('стоимость') || text.includes('сколько') || text.includes('прайс')) {
+      return "💰 Цены на услуги:\n\n📸 Нейрофото — от 600 ₽\n💻 AI-сайты — от 29 900 ₽\n🛍️ Карточки — от 3 500 ₽\n🤖 Макс боты — от 39 900 ₽\n\nТочная стоимость зависит от задачи. Напишите мне на почту oksanchik2170@yandex.ru — обсудим детали!";
+    }
+    
+    if (text.includes('привет') || text.includes('здравств') || text.includes('добрый')) {
+      return "Привет! 👋 Рада вас видеть!\n\nЧем могу помочь? Я отвечу на вопросы о:\n• Нейрофото 📸\n• AI-сайтах 💻\n• Макс ботах 🤖\n• Карточках 🛍️\n\nИли просто расскажу о себе и проектах!";
+    }
+    
+    return "Спасибо за ваш вопрос! 🙏\n\nМогу предложить:\n• Посмотреть мои работы в портфолио\n• Заказать нейрофото, сайт или карточки\n• Узнать больше о предстоящих проектах\n\nЕсли не нашли ответ — напишите мне лично на почту oksanchik2170@yandex.ru, я обязательно отвечу!";
+  };
+
   const callAI = async (userText, history) => {
     try {
+      const messagesHistory = history.map((msg) => ({
+        role: msg.sender === "user" ? "user" : "assistant",
+        content: msg.text,
+      }));
+
+      messagesHistory.push({
+        role: "user",
+        content: userText,
+      });
+
+      console.log("Отправляем в AI:", JSON.stringify({ messages: messagesHistory }, null, 2));
+
+      // Пробуем запрос к AI
       const res = await fetch(AI_CHAT_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        // Исправляем: передаём "message" вместо "messages"
-        body: JSON.stringify({ message: userText, history }),
+        headers: { 
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ messages: messagesHistory }),
       });
-      const data = await res.json();
-      console.log("AI Response:", data);
-      if (data.error) {
-        return "😔 Что-то пошло не так. Попробуйте ещё раз или напишите на почту oksanchik2170@yandex.ru";
+
+      console.log("Статус ответа:", res.status);
+
+      if (!res.ok) {
+        console.warn("AI недоступен, используем локальные ответы");
+        // Возвращаем локальный ответ
+        return getLocalResponse(userText);
       }
-      // Исправляем: проверяем разные возможные поля ответа
-      return data.reply || data.response || data.text || "Извините, я не поняла вопрос. Попробуйте переформулировать.";
+
+      const data = await res.json();
+      console.log("Ответ AI:", data);
+
+      if (data.error) {
+        console.warn("Ошибка AI, используем локальные ответы");
+        return getLocalResponse(userText);
+      }
+
+      // Проверяем разные варианты ответа
+      if (data.reply) return data.reply;
+      if (data.response) return data.response;
+      if (data.text) return data.text;
+      if (data.content) return data.content;
+      if (data.message) return data.message;
+      
+      if (data.choices && data.choices[0] && data.choices[0].message) {
+        return data.choices[0].message.content;
+      }
+
+      return getLocalResponse(userText);
     } catch (err) {
-      console.error("AI Error:", err);
-      return "😔 Не удалось связаться с помощником. Напишите на почту oksanchik2170@yandex.ru";
+      console.warn("Ошибка при запросе к AI, используем локальные ответы:", err);
+      return getLocalResponse(userText);
     }
   };
 
@@ -723,7 +789,6 @@ function ChatWidget() {
     )
   );
 }
-
 // ============================================================
 //  ГЛАВНЫЙ КОМПОНЕНТ APP
 // ============================================================
