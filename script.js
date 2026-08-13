@@ -581,6 +581,7 @@ function ProfilePhoto() {
 }
 
 // Компонент ChatWidget (исправленный)
+// Компонент ChatWidget (исправленный)
 function ChatWidget() {
   const [open, setOpen] = React.useState(false);
   const [messages, setMessages] = React.useState([
@@ -613,13 +614,16 @@ function ChatWidget() {
       const res = await fetch(AI_CHAT_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        // Исправляем: передаём "message" вместо "messages"
         body: JSON.stringify({ message: userText, history }),
       });
       const data = await res.json();
+      console.log("AI Response:", data);
       if (data.error) {
         return "😔 Что-то пошло не так. Попробуйте ещё раз или напишите на почту oksanchik2170@yandex.ru";
       }
-      return data.reply || data.response || "Извините, я не поняла вопрос. Попробуйте переформулировать.";
+      // Исправляем: проверяем разные возможные поля ответа
+      return data.reply || data.response || data.text || "Извините, я не поняла вопрос. Попробуйте переформулировать.";
     } catch (err) {
       console.error("AI Error:", err);
       return "😔 Не удалось связаться с помощником. Напишите на почту oksanchik2170@yandex.ru";
