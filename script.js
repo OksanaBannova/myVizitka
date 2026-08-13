@@ -580,7 +580,7 @@ function ProfilePhoto() {
   );
 }
 
-// Компонент ChatWidget
+// Компонент ChatWidget (исправленный)
 function ChatWidget() {
   const [open, setOpen] = React.useState(false);
   const [messages, setMessages] = React.useState([
@@ -608,21 +608,20 @@ function ChatWidget() {
     }
   }, [open]);
 
-  
-
   const callAI = async (userText, history) => {
     try {
       const res = await fetch(AI_CHAT_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: userText, history }),
+        body: JSON.stringify({ message: userText, history }),
       });
       const data = await res.json();
       if (data.error) {
         return "😔 Что-то пошло не так. Попробуйте ещё раз или напишите на почту oksanchik2170@yandex.ru";
       }
-      return data.reply;
+      return data.reply || data.response || "Извините, я не поняла вопрос. Попробуйте переформулировать.";
     } catch (err) {
+      console.error("AI Error:", err);
       return "😔 Не удалось связаться с помощником. Напишите на почту oksanchik2170@yandex.ru";
     }
   };
@@ -636,7 +635,6 @@ function ChatWidget() {
     setInput("");
     setIsProcessing(true);
 
-    // Передаём историю (без системных сообщений)
     const history = newMessages
       .filter((m) => m.text && m.text.trim())
       .slice(-10)
@@ -646,6 +644,80 @@ function ChatWidget() {
     setMessages((prev) => [...prev, { sender: "bot", text: botResponse }]);
     setIsProcessing(false);
   };
+
+  if (!open) {
+    return React.createElement(
+      "button",
+      {
+        className: "chat-open-btn",
+        onClick: () => setOpen(true)
+      },
+      "💬"
+    );
+  }
+
+  return React.createElement(
+    "div",
+    { className: "chat-widget" },
+    React.createElement(
+      "div",
+      { className: "chat-header" },
+      "AI Помощник",
+      React.createElement(
+        "button",
+        {
+          className: "chat-close",
+          onClick: () => setOpen(false)
+        },
+        "×"
+      )
+    ),
+    React.createElement(
+      "div",
+      { className: "chat-messages" },
+      messages.map((msg, i) =>
+        React.createElement(
+          "div",
+          {
+            key: i,
+            className: `chat-message ${msg.sender}`
+          },
+          msg.text.split('\n').map((line, j) =>
+            React.createElement("div", { key: j, style: { marginBottom: j < msg.text.split('\n').length - 1 ? '4px' : '0' } }, line)
+          )
+        )
+      ),
+      isProcessing && React.createElement(
+        "div",
+        { className: "chat-message bot", style: { opacity: 0.6 } },
+        "✍️ Печатает..."
+      ),
+      React.createElement("div", { ref: messagesEndRef })
+    ),
+    React.createElement(
+      "div",
+      { className: "chat-input-wrap" },
+      React.createElement("input", {
+        ref: inputRef,
+        className: "chat-input",
+        value: input,
+        placeholder: "Введите сообщение...",
+        onChange: e => setInput(e.target.value),
+        onKeyDown: e => {
+          if (e.key === "Enter") sendMessage();
+        }
+      }),
+      React.createElement(
+        "button",
+        {
+          className: "chat-send",
+          onClick: sendMessage,
+          disabled: isProcessing
+        },
+        "➤"
+      )
+    )
+  );
 }
 
 // ============================================================
