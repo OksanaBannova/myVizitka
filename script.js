@@ -580,7 +580,7 @@ function ProfilePhoto() {
   );
 }
 
-// Компонент ChatWidget (с упрощённым доступом)
+// Компонент ChatWidget с кнопками быстрых вопросов
 function ChatWidget() {
   const [open, setOpen] = React.useState(false);
   const [messages, setMessages] = React.useState([
@@ -593,6 +593,7 @@ function ChatWidget() {
   const [isProcessing, setIsProcessing] = React.useState(false);
   const messagesEndRef = React.useRef(null);
   const inputRef = React.useRef(null);
+  const [showQuickButtons, setShowQuickButtons] = React.useState(true);
 
   React.useEffect(() => {
     if (messagesEndRef.current) {
@@ -608,35 +609,62 @@ function ChatWidget() {
     }
   }, [open]);
 
-  // Локальные ответы (если AI не работает)
+  // Быстрые вопросы
+  const quickQuestions = [
+    { icon: '💰', text: 'Цены на услуги' },
+    { icon: '📸', text: 'Нейрофото' },
+    { icon: '💻', text: 'Сайты и лендинги' },
+    { icon: '🤖', text: 'Боты и автоматизация' },
+    { icon: '🛍️', text: 'Карточки для маркетплейсов' },
+    { icon: '🎨', text: 'Фирменный стиль' },
+    { icon: '🚀', text: 'Готовые пакеты' },
+    { icon: '📬', text: 'Контакты' },
+  ];
+
   const getLocalResponse = (userText) => {
     const text = userText.toLowerCase();
     
     if (text.includes('нейрофото') || text.includes('фото') || text.includes('портрет')) {
-      return "📸 Нейрофото — это художественные AI-портреты с глубокой проработкой деталей.\n\nЯ создаю:\n• Семейные портреты\n• Фото для соцсетей\n• Художественные коллажи\n• Обработку с ретушью\n\nСтоимость от 600 ₽. Хотите попробовать? Напишите мне на почту oksanchik2170@yandex.ru!";
+      return "📸 *НейроФото* — это художественные AI-портреты с глубокой проработкой деталей.\n\nЯ создаю:\n• Семейные портреты\n• Фото для соцсетей\n• Художественные коллажи\n• Обработку с ретушью\n\n💰 *Стоимость:*\n• НейроФото — от 600 ₽\n• Портрет поколений — от 600 ₽\n• Индивидуальная фотосессия — от 100 ₽\n• Трендовое фото — от 150 ₽\n• Замена фона — от 50 ₽\n\nХотите попробовать? Напишите на почту oksanchik2170@yandex.ru!";
     }
-    
+
     if (text.includes('сайт') || text.includes('лендинг') || text.includes('страница')) {
-      return "💻 Я создаю продающие AI-сайты и лендинги под ключ:\n\n• Современный дизайн\n• Анимации и эффекты\n• Формы заявок\n• Адаптив под телефоны\n• Интеграция с мессенджерами\n\nСтоимость от 29 900 ₽. Расскажите о вашем проекте — я предложу лучшее решение!";
+      return "💻 *AI-сайты и лендинги под ключ:*\n\n• Landing Page — 29 900 ₽\n  Современный дизайн, адаптация, форма заявок, SEO\n• Корпоративный сайт — 59 900 ₽\n  До 10 страниц, CMS, анимация, форма заявок\n• SaaS / CRM — от 120 000 ₽\n  Авторизация, личный кабинет, БД, админ-панель\n\n✨ Все сайты адаптируются под телефоны и имеют современный UI.\n\n📌 Расскажите о вашем проекте — я предложу лучшее решение!";
     }
-    
-    if (text.includes('бот') || text.includes('макс') || text.includes('автоматизация')) {
-      return "🤖 Макс боты — это моя новая разработка!\n\nУмные боты для:\n• Автоматизации заявок\n• Ответов на вопросы клиентов\n• Сбора лидов\n• Консультаций в мессенджерах\n\nСтоимость от 39 900 ₽. Чтобы не пропустить запуск — подпишитесь на обновления!";
+
+    if (text.includes('бот') || text.includes('макс') || text.includes('автоматизация') || text.includes('консультант')) {
+      return "🤖 *AI-автоматизация:*\n\n• AI Консультант на сайт — 24 900 ₽\n  Обучение на данных компании, ответы 24/7\n• Telegram / WhatsApp bot — от 39 900 ₽\n  Приём заявок, FAQ, запись клиентов\n• AI Отдел продаж — от 69 900 ₽\n  Квалификация, CRM, аналитика\n\n🚀 Это моя новая разработка! Умные боты для автоматизации заявок и сбора лидов.\n\nХотите попробовать? Пишите на oksanchik2170@yandex.ru!";
     }
-    
+
     if (text.includes('карточк') || text.includes('маркетплейс') || text.includes('wildberries') || text.includes('ozon') || text.includes('вб')) {
-      return "🛍️ Я создаю карточки для маркетплейсов:\n\n• AI-фоны и атмосфера\n• Инфографика\n• Акцент на выгодах\n• Стиль под ваш бренд\n\nСтоимость от 3 500 ₽ за карточку. Расскажите о вашем товаре — сделаем крутой визуал!";
+      return "🛍️ *Карточки для маркетплейсов:*\n\n• Карточка товара Premium — 3 500 ₽\n  Инфографика, SEO-текст, дизайн\n• Комплект карточек (до 5) — 14 900 ₽\n\n• AI Фото товара — от 2 900 ₽\n  До 10 изображений, любой фон, для маркетплейсов\n• AI Фото для личного бренда — 5 900 ₽\n  30 фото, до 10 образов, высокое качество\n• AI Фото команды компании — от 9 900 ₽\n  Единый стиль для руководителей и сотрудников\n\n📌 Всё под ваш бренд — сделаем крутой визуал!";
     }
-    
-    if (text.includes('цена') || text.includes('стоимость') || text.includes('сколько') || text.includes('прайс')) {
-      return "💰 Цены на услуги:\n\n📸 Нейрофото — от 600 ₽\n💻 AI-сайты — от 29 900 ₽\n🛍️ Карточки — от 3 500 ₽\n🤖 Макс боты — от 39 900 ₽\n\nТочная стоимость зависит от задачи. Напишите мне на почту oksanchik2170@yandex.ru — обсудим детали!";
+
+    if (text.includes('фирменный стиль') || text.includes('логотип') || text.includes('бренд')) {
+      return "🎨 *Фирменный стиль:*\n\n• Логотип — 4 900 ₽\n• Фирменный стиль — 9 900 ₽\n• Баннеры — 990 ₽ / шт\n• Рекламные креативы — 1 500 ₽ / шт\n\n📌 Создам уникальный образ для вашего бизнеса!";
     }
-    
-    if (text.includes('привет') || text.includes('здравств') || text.includes('добрый')) {
-      return "Привет! 👋 Рада вас видеть!\n\nЧем могу помочь? Я отвечу на вопросы о:\n• Нейрофото 📸\n• AI-сайтах 💻\n• Макс ботах 🤖\n• Карточках 🛍️\n\nИли просто расскажу о себе и проектах!";
+
+    if (text.includes('пакет') || text.includes('готовый') || text.includes('комплекс')) {
+      return "🚀 *Готовые пакеты для бизнеса:*\n\n• START BUSINESS — 39 900 ₽\n  Лендинг + AI-консультант + форма заявок\n\n• BUSINESS PRO — 79 900 ₽\n  Корпоративный сайт + AI-консультант + 10 карточек\n\n• DIGITAL BUSINESS — 149 900 ₽\n  SaaS/CRM + AI-консультант + AI-фотосессия + фирмстиль\n\n📌 Все пакеты собираются под ключ и включают полную настройку!";
     }
-    
-    return "Спасибо за ваш вопрос! 🙏\n\nМогу предложить:\n• Посмотреть мои работы в портфолио\n• Заказать нейрофото, сайт или карточки\n• Узнать больше о предстоящих проектах\n\nЕсли не нашли ответ — напишите мне лично на почту oksanchik2170@yandex.ru, я обязательно отвечу!";
+
+    if (text.includes('контакт') || text.includes('связаться') || text.includes('почта') || text.includes('написать')) {
+      return "📬 *Связаться со мной:*\n\n📧 Email: oksanchik2170@yandex.ru\n\nНапишите на почту — обсудим ваш проект, я отвечу в течение нескольких часов!";
+    }
+
+    if (text.includes('цена') || text.includes('стоимость') || text.includes('сколько') || text.includes('прайс') || text.includes('все услуги')) {
+      return "💰 *Полный прайс-лист:*\n\n📸 *Для себя:*\n• НейроФото — от 600 ₽\n• Портрет поколений — от 600 ₽\n• Индивидуальная фотосессия — от 100 ₽\n• Трендовое фото — от 150 ₽\n• Детская фотосессия — от 100 ₽\n• Семейное фото — от 450 ₽\n• Парная фотосессия — от 250 ₽\n• Замена фона — от 50 ₽\n\n🏢 *Для бизнеса:*\n• AI Фото товара — от 2 900 ₽\n• Карточка товара Premium — 3 500 ₽\n• Landing Page — 29 900 ₽\n• Корпоративный сайт — 59 900 ₽\n• Telegram / WhatsApp bot — от 39 900 ₽\n• START BUSINESS — 39 900 ₽\n• BUSINESS PRO — 79 900 ₽\n• DIGITAL BUSINESS — 149 900 ₽\n\n📌 Точная стоимость зависит от задачи. Напишите на почту oksanchik2170@yandex.ru для индивидуального расчёта!";
+    }
+
+    if (text.includes('привет') || text.includes('здравств') || text.includes('добрый') || text.includes('hi') || text.includes('hello')) {
+      return "👋 Привет! Я AI-помощник Оксаны.\n\nЯ могу рассказать о:\n• 📸 Нейрофото и фотосессиях\n• 💻 AI-сайтах и лендингах\n• 🤖 Макс ботах и автоматизации\n• 🛍️ Карточках для маркетплейсов\n• 💰 Ценах на все услуги\n\nПросто спросите меня о любой услуге!";
+    }
+
+    if (text.includes('кто ты') || text.includes('кто вы') || text.includes('о себе') || text.includes('оксана')) {
+      return "👩‍💻 *Привет! Я Оксана Баннова.*\n\nЯ самозанятая специалистка с образованием по специальности «Прикладная математика и информатика» (КемГУ, 2018) и дополнительным образованием «JavaScript-разработчик» (Нетология, 2025).\n\nЯ создаю нейрофото, сайты, ботов и карточки для маркетплейсов. Мой подход — сочетание математического склада ума и современных нейросетей.\n\n📌 Сайт: https://oksanabannova.github.io/myVizitka/\n📧 Почта: oksanchik2170@yandex.ru";
+    }
+
+    return "🙏 *Спасибо за ваш вопрос!*\n\nЯ могу помочь с:\n• 📸 Нейрофото и фотосессиями\n• 💻 AI-сайтами и лендингами\n• 🤖 Макс ботами и автоматизацией\n• 🛍️ Карточками для маркетплейсов\n• 🎨 Фирменным стилем и логотипами\n• 🚀 Готовыми пакетами\n\nИли просто спросите меня о ценах, я покажу полный прайс-лист!\n\n📌 Если не нашли ответ — напишите мне на почту oksanchik2170@yandex.ru, я обязательно отвечу!";
   };
 
   const callAI = async (userText, history) => {
@@ -651,13 +679,11 @@ function ChatWidget() {
         content: userText,
       });
 
-      console.log("Отправляем в AI:", JSON.stringify({ messages: messagesHistory }, null, 2));
-
-      // Пробуем запрос к AI
       const res = await fetch(AI_CHAT_URL, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
+          "apikey": SUPABASE_KEY,
         },
         body: JSON.stringify({ messages: messagesHistory }),
       });
@@ -666,7 +692,6 @@ function ChatWidget() {
 
       if (!res.ok) {
         console.warn("AI недоступен, используем локальные ответы");
-        // Возвращаем локальный ответ
         return getLocalResponse(userText);
       }
 
@@ -674,21 +699,13 @@ function ChatWidget() {
       console.log("Ответ AI:", data);
 
       if (data.error) {
-        console.warn("Ошибка AI, используем локальные ответы");
         return getLocalResponse(userText);
       }
 
-      // Проверяем разные варианты ответа
       if (data.reply) return data.reply;
       if (data.response) return data.response;
-      if (data.text) return data.text;
       if (data.content) return data.content;
-      if (data.message) return data.message;
       
-      if (data.choices && data.choices[0] && data.choices[0].message) {
-        return data.choices[0].message.content;
-      }
-
       return getLocalResponse(userText);
     } catch (err) {
       console.warn("Ошибка при запросе к AI, используем локальные ответы:", err);
@@ -696,14 +713,15 @@ function ChatWidget() {
     }
   };
 
-  const sendMessage = async () => {
-    if (!input.trim() || isProcessing) return;
+  const sendMessage = async (text) => {
+    const userText = text || input.trim();
+    if (!userText || isProcessing) return;
 
-    const userText = input.trim();
     const newMessages = [...messages, { sender: "user", text: userText }];
     setMessages(newMessages);
     setInput("");
     setIsProcessing(true);
+    setShowQuickButtons(false);
 
     const history = newMessages
       .filter((m) => m.text && m.text.trim())
@@ -713,6 +731,7 @@ function ChatWidget() {
     const botResponse = await callAI(userText, history);
     setMessages((prev) => [...prev, { sender: "bot", text: botResponse }]);
     setIsProcessing(false);
+    setShowQuickButtons(true);
   };
 
   if (!open) {
@@ -725,6 +744,53 @@ function ChatWidget() {
       "💬"
     );
   }
+
+  // Рендерим кнопки быстрых вопросов
+  const quickButtons = showQuickButtons && messages.length <= 2 ? React.createElement(
+    "div",
+    {
+      style: {
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '6px',
+        padding: '8px 12px 4px',
+        justifyContent: 'center',
+        borderTop: '1px solid rgba(255,255,255,0.05)',
+        background: 'rgba(255,255,255,0.02)',
+      }
+    },
+    quickQuestions.map((q, i) =>
+      React.createElement(
+        "button",
+        {
+          key: i,
+          onClick: () => sendMessage(q.text),
+          style: {
+            background: 'rgba(255,255,255,0.06)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: '20px',
+            padding: '5px 12px',
+            color: '#c3c3c3',
+            fontSize: '12px',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+            whiteSpace: 'nowrap',
+          },
+          onMouseEnter: (e) => {
+            e.currentTarget.style.background = 'rgba(33,212,253,0.15)';
+            e.currentTarget.style.borderColor = '#21d4fd';
+            e.currentTarget.style.color = '#fff';
+          },
+          onMouseLeave: (e) => {
+            e.currentTarget.style.background = 'rgba(255,255,255,0.06)';
+            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)';
+            e.currentTarget.style.color = '#c3c3c3';
+          }
+        },
+        `${q.icon} ${q.text}`
+      )
+    )
+  ) : null;
 
   return React.createElement(
     "div",
@@ -764,6 +830,7 @@ function ChatWidget() {
       ),
       React.createElement("div", { ref: messagesEndRef })
     ),
+    quickButtons,
     React.createElement(
       "div",
       { className: "chat-input-wrap" },
@@ -781,7 +848,7 @@ function ChatWidget() {
         "button",
         {
           className: "chat-send",
-          onClick: sendMessage,
+          onClick: () => sendMessage(),
           disabled: isProcessing
         },
         "➤"
