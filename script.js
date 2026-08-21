@@ -996,7 +996,8 @@ function App() {
                 "💬 Написать в МАКС"
               )
             )
-          )
+          ),
+           React.createElement(OrderCalculator, null)  // ← НОВАЯ КНОПКА
         )
       ),
       React.createElement(
@@ -1183,4 +1184,269 @@ React.createElement(
 // ============================================================
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
+
+// ============================================================
+//  КОМПОНЕНТ КАЛЬКУЛЯТОРА С ОПЛАТОЙ
+// ============================================================
+
+function OrderCalculator() {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [selectedServices, setSelectedServices] = React.useState([]);
+  const [total, setTotal] = React.useState(0);
+  const [discount, setDiscount] = React.useState(0);
+  const [finalTotal, setFinalTotal] = React.useState(0);
+
+  // Список услуг для калькулятора
+  const services = [
+    { id: 'neiro', name: 'НейроФото', price: 600, category: '📸 Нейрофото' },
+    { id: 'portrait', name: 'Портрет поколений', price: 600, category: '📸 Нейрофото' },
+    { id: 'individual', name: 'Индивидуальная фотосессия', price: 100, category: '📸 Нейрофото' },
+    { id: 'trend', name: 'Трендовое фото', price: 150, category: '📸 Нейрофото' },
+    { id: 'family', name: 'Семейное фото', price: 450, category: '👨‍👩‍👧 Семейные' },
+    { id: 'children', name: 'Детская фотосессия', price: 100, category: '👨‍👩‍👧 Семейные' },
+    { id: 'couple', name: 'Парная фотосессия', price: 250, category: '❤️ Парные' },
+    { id: 'couple_trend', name: 'Парная трендовая', price: 300, category: '❤️ Парные' },
+    { id: 'bg_change', name: 'Замена фона', price: 50, category: '🎨 Дополнительно' },
+    { id: 'custom', name: 'Фото по запросу', price: 150, category: '🎨 Дополнительно' },
+    { id: 'cert_photo', name: 'Сертификат на фотосессию', price: 1500, category: '🎁 Сертификаты' },
+    { id: 'cert_neiro', name: 'Сертификат на нейрофото', price: 2000, category: '🎁 Сертификаты' },
+    { id: 'ai_product', name: 'AI Фото товара', price: 2900, category: '🏢 Бизнес' },
+    { id: 'ai_brand', name: 'AI Фото для бренда', price: 5900, category: '🏢 Бизнес' },
+    { id: 'ai_team', name: 'AI Фото команды', price: 9900, category: '🏢 Бизнес' },
+    { id: 'card_premium', name: 'Карточка Premium', price: 3500, category: '🏢 Бизнес' },
+    { id: 'card_pack', name: 'Комплект карточек (до 5)', price: 14900, category: '🏢 Бизнес' },
+    { id: 'landing', name: 'Landing Page', price: 29900, category: '💻 Сайты' },
+    { id: 'corp_site', name: 'Корпоративный сайт', price: 59900, category: '💻 Сайты' },
+    { id: 'saas', name: 'SaaS / CRM', price: 120000, category: '💻 Сайты' },
+    { id: 'ai_consultant', name: 'AI Консультант', price: 24900, category: '🤖 Автоматизация' },
+    { id: 'tg_bot', name: 'Telegram / WhatsApp bot', price: 39900, category: '🤖 Автоматизация' },
+    { id: 'ai_sales', name: 'AI Отдел продаж', price: 69900, category: '🤖 Автоматизация' },
+    { id: 'logo', name: 'Логотип', price: 4900, category: '🎨 Брендинг' },
+    { id: 'brand_style', name: 'Фирменный стиль', price: 9900, category: '🎨 Брендинг' },
+    { id: 'banners', name: 'Баннеры (за шт)', price: 990, category: '🎨 Брендинг' },
+    { id: 'creatives', name: 'Рекламные креативы (за шт)', price: 1500, category: '🎨 Брендинг' },
+    { id: 'start_business', name: 'START BUSINESS', price: 39900, category: '🚀 Пакеты' },
+    { id: 'business_pro', name: 'BUSINESS PRO', price: 79900, category: '🚀 Пакеты' },
+    { id: 'digital_business', name: 'DIGITAL BUSINESS', price: 149900, category: '🚀 Пакеты' },
+  ];
+
+  // Группируем услуги по категориям
+  const groupedServices = services.reduce((acc, service) => {
+    if (!acc[service.category]) acc[service.category] = [];
+    acc[service.category].push(service);
+    return acc;
+  }, {});
+
+  const toggleService = (serviceId) => {
+    setSelectedServices(prev =>
+      prev.includes(serviceId)
+        ? prev.filter(id => id !== serviceId)
+        : [...prev, serviceId]
+    );
+  };
+
+  // Пересчёт при изменении выбранных услуг
+  React.useEffect(() => {
+    const selected = services.filter(s => selectedServices.includes(s.id));
+    const sum = selected.reduce((acc, s) => acc + s.price, 0);
+    setTotal(sum);
+
+    // Расчёт скидки 5% от 50 000 ₽
+    if (sum >= 50000) {
+      const disc = sum * 0.05;
+      setDiscount(disc);
+      setFinalTotal(sum - disc);
+    } else {
+      setDiscount(0);
+      setFinalTotal(sum);
+    }
+  }, [selectedServices]);
+
+  const handleOrder = () => {
+    if (selectedServices.length === 0) {
+      alert('Выберите хотя бы одну услугу!');
+      return;
+    }
+
+    const selected = services.filter(s => selectedServices.includes(s.id));
+    const message = `🛒 Заказ:\n${selected.map(s => `• ${s.name} — ${s.price} ₽`).join('\n')}\n\n💰 Сумма: ${total} ₽\n${discount > 0 ? `🎉 Скидка 5%: -${discount} ₽\n` : ''}💳 Итого: ${finalTotal} ₽\n\nОтправьте заказ на почту oksanchik2170@yandex.ru или в МАКС!`;
+
+    // Отправляем в почту или МАКС
+    if (confirm('Отправить заказ на почту?')) {
+      window.location.href = `mailto:oksanchik2170@yandex.ru?subject=Заказ%20на%20сумму%20${finalTotal}%20₽&body=${encodeURIComponent(message)}`;
+    }
+  };
+
+  if (!isOpen) {
+    return React.createElement(
+      "button",
+      {
+        className: "btn btn-primary calc-open-btn",
+        onClick: () => setIsOpen(true),
+        style: { background: "linear-gradient(120deg, #ff5c97, #ff9a5e)", fontSize: "16px", padding: "14px 32px" }
+      },
+      "💰 Калькулятор и оплата"
+    );
+  }
+
+  return React.createElement(
+    "div",
+    { className: "calc-modal-overlay active", onClick: (e) => {
+      if (e.target === e.currentTarget) setIsOpen(false);
+    }},
+    React.createElement(
+      "div",
+      { className: "calc-modal" },
+      React.createElement(
+        "button",
+        {
+          className: "calc-modal-close",
+          onClick: () => setIsOpen(false)
+        },
+        "✕"
+      ),
+      React.createElement(
+        "div",
+        { className: "calc-content" },
+        React.createElement(
+          "h2",
+          null,
+          "💰 Калькулятор стоимости"
+        ),
+        React.createElement(
+          "p",
+          { className: "calc-subtitle" },
+          "Выберите услуги, чтобы рассчитать общую стоимость и получить скидку 5% при заказе от 50 000 ₽"
+        ),
+        React.createElement(
+          "div",
+          { className: "calc-grid" },
+          Object.keys(groupedServices).map(category =>
+            React.createElement(
+              "div",
+              { className: "calc-category", key: category },
+              React.createElement(
+                "h3",
+                null,
+                category
+              ),
+              groupedServices[category].map(service =>
+                React.createElement(
+                  "label",
+                  {
+                    key: service.id,
+                    className: "calc-service",
+                    style: {
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '8px 12px',
+                      background: selectedServices.includes(service.id) ? 'rgba(33,212,253,0.1)' : 'rgba(255,255,255,0.02)',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      border: selectedServices.includes(service.id) ? '1px solid #21d4fd' : '1px solid rgba(255,255,255,0.05)',
+                      transition: 'all 0.2s ease'
+                    }
+                  },
+                  React.createElement(
+                    "span",
+                    null,
+                    service.name
+                  ),
+                  React.createElement(
+                    "span",
+                    { style: { display: 'flex', alignItems: 'center', gap: '10px' } },
+                    React.createElement(
+                      "span",
+                      { style: { color: '#21d4fd', fontWeight: 600 } },
+                      `${service.price} ₽`
+                    ),
+                    React.createElement("input", {
+                      type: "checkbox",
+                      checked: selectedServices.includes(service.id),
+                      onChange: () => toggleService(service.id),
+                      style: { width: '18px', height: '18px', accentColor: '#21d4fd' }
+                    })
+                  )
+                )
+              )
+            )
+          )
+        ),
+        React.createElement(
+          "div",
+          { className: "calc-total" },
+          React.createElement(
+            "div",
+            { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' } },
+            React.createElement(
+              "div",
+              null,
+              React.createElement(
+                "span",
+                { style: { color: '#c3c3c3' } },
+                "Выбрано услуг: "
+              ),
+              React.createElement(
+                "span",
+                { style: { fontWeight: 700, fontSize: '20px' } },
+                selectedServices.length
+              )
+            ),
+            React.createElement(
+              "div",
+              null,
+              React.createElement(
+                "span",
+                { style: { color: '#c3c3c3' } },
+                "Сумма: "
+              ),
+              React.createElement(
+                "span",
+                { style: { fontWeight: 700, fontSize: '20px', color: '#21d4fd' } },
+                `${total} ₽`
+              )
+            )
+          ),
+          discount > 0 && React.createElement(
+            "div",
+            { style: { marginTop: '8px', padding: '8px 12px', background: 'rgba(255,215,0,0.1)', borderRadius: '8px', border: '1px solid rgba(255,215,0,0.3)' } },
+            React.createElement(
+              "span",
+              { style: { color: '#ffd700' } },
+              `🎉 Скидка 5%: -${discount} ₽`
+            ),
+            React.createElement(
+              "span",
+              { style: { marginLeft: '16px', fontWeight: 700, fontSize: '22px', color: '#ffd700' } },
+              `Итого: ${finalTotal} ₽`
+            )
+          ),
+          React.createElement(
+            "div",
+            { style: { display: 'flex', gap: '12px', marginTop: '16px', flexWrap: 'wrap' } },
+            React.createElement(
+              "button",
+              {
+                className: "btn btn-primary",
+                onClick: handleOrder,
+                style: { background: "linear-gradient(120deg, #21d4fd, #ff5c97)" }
+              },
+              "📧 Отправить заказ"
+            ),
+            React.createElement(
+              "button",
+              {
+                className: "btn btn-ghost",
+                onClick: () => setIsOpen(false)
+              },
+              "Закрыть"
+            )
+          )
+        )
+      )
+    )
+  );
+}
+
 root.render(React.createElement(App));
