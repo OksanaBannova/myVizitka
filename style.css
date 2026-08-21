@@ -1070,3 +1070,37 @@ h1 span {
   background: rgba(255, 255, 255, 0.12);
   border-color: #21d4fd;
 }
+
+/* ===== ССЫЛКА НА АДМИН-ПАНЕЛЬ ===== */
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.footer-links a {
+  color: var(--muted, #c3c3c3);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+  color: #21d4fd;
+  text-decoration: underline;
+}
+
+.admin-link {
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: rgba(33, 212, 253, 0.1);
+  border: 1px solid rgba(33, 212, 253, 0.2);
+  transition: all 0.2s ease;
+}
+
+.admin-link:hover {
+  background: rgba(33, 212, 253, 0.2);
+  border-color: #21d4fd;
+  color: #21d4fd !important;
+}

@@ -1120,32 +1120,42 @@ function App() {
         )
       )
     ),
-    // Футер
+   // Футер (обновлённый с кнопкой "Админ-панель")
+React.createElement(
+  "footer",
+  { className: "site-footer" },
+  React.createElement(
+    "div",
+    { className: "site-footer-inner" },
     React.createElement(
-      "footer",
-      { className: "site-footer" },
-      React.createElement(
-        "div",
-        { className: "site-footer-inner" },
-        React.createElement(
-          "div",
-          null,
-          "© ",
-          new Date().getFullYear(),
-          " Оксана Баннова — самозанятый разработчик и нейродизайнер"
-        ),
-        React.createElement(
-          "div",
-          null,
-          "📧 ",
-          React.createElement(
-            "a",
-            { href: "mailto:oksanchik2170@yandex.ru" },
-            "oksanchik2170@yandex.ru"
-          )
-        )
-      )
+      "div",
+      null,
+      "© ",
+      new Date().getFullYear(),
+      " Оксана Баннова — самозанятый разработчик и нейродизайнер"
     ),
+    React.createElement(
+      "div",
+      { className: "footer-links" },
+      React.createElement(
+        "a",
+        {
+          href: "https://app.supabase.com/project/eskauqttcvfxrbnvljyu/editor/253827?schema=public&table=orders",
+          target: "_blank",
+          className: "admin-link",
+          rel: "noopener noreferrer"
+        },
+        "🔐 Админ-панель"
+      ),
+      " | ",
+      React.createElement(
+        "a",
+        { href: "mailto:oksanchik2170@yandex.ru" },
+        "📧 oksanchik2170@yandex.ru"
+      )
+    )
+  )
+),
     // Галерея
     galleryConfig && React.createElement(GalleryModal, {
       isOpen: !!galleryConfig,
