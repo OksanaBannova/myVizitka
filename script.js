@@ -613,7 +613,6 @@ function ChatWidget() {
     }
   }, [open]);
 
-  // Быстрые вопросы
   const quickQuestions = [
     { icon: '📋', text: 'Как сделать заказ' },
     { icon: '💰', text: 'Цены на услуги' },
@@ -853,6 +852,7 @@ function App() {
   const [galleryConfig, setGalleryConfig] = React.useState(null);
   const [message, setMessage] = React.useState(null);
   const [isPriceOpen, setIsPriceOpen] = React.useState(false);
+  const [showOrderOptions, setShowOrderOptions] = React.useState(false);
 
   const handleCardClick = (type) => {
     if (type === "neiro") {
@@ -947,21 +947,12 @@ function App() {
           "div",
           { className: "btn-row" },
           React.createElement(
-            "a",
-            {
-              className: "btn btn-primary",
-              href: "mailto:oksanchik2170@yandex.ru",
-              target: "_blank"
-            },
-            "📧 Написать на почту"
-          ),
-          React.createElement(
             "button",
             {
               className: "btn btn-ghost",
               onClick: scrollToPortfolio
             },
-            "Портфолио"
+            "🌟 Портфолио"
           ),
           React.createElement(
             "button",
@@ -973,14 +964,38 @@ function App() {
             "💰 Прайс-лист"
           ),
           React.createElement(
-            "a",
-            {
-              className: "btn btn-primary",
-              href: "https://max.ru/se13476635_bot",
-              target: "_blank",
-              style: { background: "linear-gradient(120deg, #21d4fd, #ff5c97)" }
-            },
-            "💬 Написать в МАКС"
+            "div",
+            { className: "order-btn-wrapper" },
+            React.createElement(
+              "button",
+              {
+                className: "btn btn-primary order-main-btn",
+                onClick: () => setShowOrderOptions(!showOrderOptions)
+              },
+              "🚀 Сделать заказ"
+            ),
+            showOrderOptions && React.createElement(
+              "div",
+              { className: "order-options" },
+              React.createElement(
+                "a",
+                {
+                  className: "btn btn-order-option",
+                  href: "mailto:oksanchik2170@yandex.ru",
+                  target: "_blank"
+                },
+                "📧 Написать на почту"
+              ),
+              React.createElement(
+                "a",
+                {
+                  className: "btn btn-order-option",
+                  href: "https://max.ru/se13476635_bot",
+                  target: "_blank"
+                },
+                "💬 Написать в МАКС"
+              )
+            )
           )
         )
       ),
