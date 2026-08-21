@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@maxhub/max-bot-api": "^0.2.5",
     "@supabase/server": "^1.2.0"
   }
 }
